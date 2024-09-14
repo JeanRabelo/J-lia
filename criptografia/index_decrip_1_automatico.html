@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decriptografia Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Decriptografia de Texto</h1>
+<p>Digite um texto abaixo, e ele será automaticamente "decriptografado" ao alterar cada caractere para o anterior no conjunto de caracteres Unicode.</p>
+
+<form id="cryptoForm">
+    <label for="textInput">Texto:</label><br>
+    <input type="text" id="textInput" name="textInput" required><br><br>
+</form>
+
+<div id="result">
+    <h2>Texto Decriptografado:</h2>
+    <p id="output"></p>
+</div>
+
+<script>
+    function decriptografar(texto) {
+        let textoDecriptografado = '';
+
+        for (let i = 0; i < texto.length; i++) {
+            let codigoCaractere = texto.charCodeAt(i);
+            let codigoAnterior = codigoCaractere - 1;
+
+            // Guardrail: Redefine caracteres que ultrapassam o limite inferior Unicode (reset para espaço)
+            if (codigoAnterior < 32) { // Valor mínimo para um caractere imprimível no Unicode
+                codigoAnterior = 65535; // Valor máximo para um caractere Unicode de 16 bits
+            }
+
+            textoDecriptografado += String.fromCharCode(codigoAnterior);
+        }
+
+        document.getElementById('output').textContent = textoDecriptografado;
+        document.getElementById('result').style.display = 'block';
+    }
+
+    // Adiciona o evento de entrada ao campo de texto
+    document.getElementById('textInput').addEventListener('input', function() {
+        let texto = this.value;
+        decriptografar(texto);
+    });
+</script>
+
+</body>
+</html>
+
