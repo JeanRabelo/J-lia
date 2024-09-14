@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Cryptography</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Text Cryptography</h1>
+<p>Enter text below, and it will automatically be "crypted" by shifting each character to the next ASCII value.</p>
+
+<form id="cryptoForm">
+    <label for="textInput">Text:</label><br>
+    <input type="text" id="textInput" name="textInput" required><br><br>
+</form>
+
+<div id="result">
+    <h2>Criptographed Text:</h2>
+    <p id="output"></p>
+</div>
+
+<script>
+    function criptograph(text) {
+        let criptographedText = '';
+
+        for (let i = 0; i < text.length; i++) {
+            let charCode = text.charCodeAt(i);
+            let nextCharCode = charCode + 1;
+
+            // Guardrail: Reset characters at the end of the ASCII table
+            if (nextCharCode > 126) { // ASCII 126 is '~'
+                nextCharCode = 32; // ASCII 32 is ' ' (space)
+            }
+
+            criptographedText += String.fromCharCode(nextCharCode);
+        }
+
+        document.getElementById('output').textContent = criptographedText;
+        document.getElementById('result').style.display = 'block';
+    }
+
+    // Add event listener to the input field
+    document.getElementById('textInput').addEventListener('input', function() {
+        let text = this.value;
+        criptograph(text);
+    });
+</script>
+
+</body>
+</html>
+
