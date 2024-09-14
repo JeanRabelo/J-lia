@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criptografia Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            display: none;
+        }
+
+        .char-container {
+            display: inline-block;
+            text-align: center;
+            margin-right: 15px; /* Increased margin for horizontal spacing */
+            position: relative;
+            height: 2.5em; /* Adjust the container height to accommodate movement */
+        }
+
+        .char {
+            display: block;
+            position: absolute;
+            left: 0;
+            transition: color 0.5s, opacity 0.5s, transform 0.5s;
+        }
+
+        .old-char {
+            top: 0;
+            color: black;
+            opacity: 1;
+        }
+
+        .new-char {
+            top: 1.5em; /* Start the new character lower than the old one */
+            color: red;
+            opacity: 0;
+        }
+
+        .fade-out {
+            transform: translateY(-1.5em); /* Move the old char up */
+            opacity: 0;
+        }
+
+        .fade-in {
+            transform: translateY(-1.5em); /* Move the new char up to replace the old one */
+            opacity: 1;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Criptografia de Texto</h1>
+<p>Digite um texto abaixo e pressione "Encriptar" para criptografá-lo. A criptografia altera cada caractere para o próximo no conjunto de caracteres Unicode com uma animação.</p>
+
+<form id="cryptoForm">
+    <label for="textInput">Texto:</label><br>
+    <input type="text" id="textInput" name="textInput" required><br><br>
+    <button type="button" id="encryptButton">Encriptar</button>
+</form>
+
+<div id="result">
+    <h2>Texto Criptografado:</h2>
+    <p id="output"></p>
+</div>
+
+<script>
+    function criptografar(texto) {
+        const outputElement = document.getElementById('output');
+        outputElement.innerHTML = ''; // Clear previous result
+
+        for (let i = 0; i < texto.length; i++) {
+            let originalChar = texto[i];
+            let encryptedChar = String.fromCharCode(texto.charCodeAt(i) + 1);
+
+            // Create a container for each pair of characters
+            let charContainer = document.createElement('div');
+            charContainer.classList.add('char-container');
+
+            // Create span for original character
+            let originalSpan = document.createElement('span');
+            originalSpan.classList.add('char', 'old-char');
+            originalSpan.textContent = originalChar;
+
+            // Create span for encrypted character
+            let encryptedSpan = document.createElement('span');
+            encryptedSpan.classList.add('char', 'new-char');
+            encryptedSpan.textContent = encryptedChar;
+
+            // Add both characters to the container
+            charContainer.appendChild(originalSpan);
+            charContainer.appendChild(encryptedSpan);
+            outputElement.appendChild(charContainer);
+
+            // Animate character replacement
+            setTimeout(() => {
+                originalSpan.classList.add('fade-out');  // Fade out and move the original character up
+                encryptedSpan.classList.add('fade-in');  // Fade in and move the encrypted character up
+            }, i * 500);  // Delay each character transition by 500ms
+        }
+
+        document.getElementById('result').style.display = 'block';
+    }
+
+    // Event listener for the "Encriptar" button
+    document.getElementById('encryptButton').addEventListener('click', function() {
+        let texto = document.getElementById('textInput').value;
+        criptografar(texto);
+    });
+</script>
+
+</body>
+</html>
+
