@@ -21,7 +21,7 @@
 <body>
 
 <h1>Text Cryptography</h1>
-<p>Enter text below, and it will automatically be "crypted" by shifting each character to the next ASCII value.</p>
+<p>Enter text below, and it will automatically be "crypted" by shifting each character to the next in the Unicode character set.</p>
 
 <form id="cryptoForm">
     <label for="textInput">Text:</label><br>
@@ -41,9 +41,9 @@
             let charCode = text.charCodeAt(i);
             let nextCharCode = charCode + 1;
 
-            // Guardrail: Reset characters at the end of the ASCII table
-            if (nextCharCode > 126) { // ASCII 126 is '~'
-                nextCharCode = 32; // ASCII 32 is ' ' (space)
+            // Guardrail: Reset characters that go beyond Unicode ranges you're interested in (general reset to space)
+            if (nextCharCode > 65535) { // Maximum value for a 16-bit Unicode character
+                nextCharCode = 32; // Space character
             }
 
             criptographedText += String.fromCharCode(nextCharCode);
