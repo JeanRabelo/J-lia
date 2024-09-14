@@ -20,16 +20,16 @@
         .char-container {
             display: inline-block;
             text-align: center;
-            margin-right: 15px; /* Increased margin for horizontal spacing */
+            margin-right: 10px; /* Horizontal spacing */
             position: relative;
-            height: 2.5em; /* Adjust the container height to accommodate movement */
+            height: 2.5em; /* Adjust container height for movement */
         }
 
         .char {
             display: block;
             position: absolute;
             left: 0;
-            transition: color 0.5s, opacity 0.5s, transform 0.5s;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; /* Synchronized easing */
         }
 
         .old-char {
@@ -39,17 +39,25 @@
         }
 
         .new-char {
-            top: 1.5em; /* Start the new character lower than the old one */
+            top: 1.5em; /* Start below the old character */
             color: red;
             opacity: 0;
         }
 
-        .fade-out {
-            transform: translateY(-1.5em); /* Move the old char up */
-            opacity: 0;
+        .appear {
+            opacity: 1; /* Make the new char visible without moving */
+            transition: opacity 0.5s ease-in-out; /* Smooth opacity transition */
         }
 
-        .fade-in {
+        .move-up {
+            transform: translateY(-1.5em); /* Move the old char up */
+        }
+
+        .fade-out {
+            opacity: 0; /* Old char fades out */
+        }
+
+        .rise-up {
             transform: translateY(-1.5em); /* Move the new char up to replace the old one */
             opacity: 1;
             color: black;
@@ -59,7 +67,7 @@
 <body>
 
 <h1>Criptografia de Texto</h1>
-<p>Digite um texto abaixo e pressione "Encriptar" para criptografá-lo. A criptografia altera cada caractere para o próximo no conjunto de caracteres Unicode com uma animação.</p>
+<p>Digite um texto abaixo e pressione "Encriptar" para criptografá-lo. A criptografia altera cada caractere para o próximo no conjunto de caracteres Unicode com uma animação em três etapas.</p>
 
 <form id="cryptoForm">
     <label for="textInput">Texto:</label><br>
@@ -100,11 +108,25 @@
             charContainer.appendChild(encryptedSpan);
             outputElement.appendChild(charContainer);
 
-            // Animate character replacement
+            // Step 1: Make the encrypted letter appear below
             setTimeout(() => {
-                originalSpan.classList.add('fade-out');  // Fade out and move the original character up
-                encryptedSpan.classList.add('fade-in');  // Fade in and move the encrypted character up
-            }, i * 500);  // Delay each character transition by 500ms
+                encryptedSpan.classList.add('appear'); // Encrypted letter appears below
+            }, i * 1000); // Delay of 1 second for each character
+
+            // Step 2: Move the original letter up
+            setTimeout(() => {
+                originalSpan.classList.add('move-up');  // Move the original character up
+            }, i * 1000 + 500); // Start the replacement after 0.5 seconds of appearing
+
+            // Step 3: Move the encrypted letter up to replace the original
+            setTimeout(() => {
+                encryptedSpan.classList.add('rise-up');  // Move the encrypted character up
+            }, i * 1000 + 1000); // Start the replacement after 1 second of appearing
+
+            // Step 4: Fade out the old character after the movement completes
+            setTimeout(() => {
+                originalSpan.classList.add('fade-out');  // Fade out the original character
+            }, i * 1000 + 1500); // Fade out after the moving up animation completes
         }
 
         document.getElementById('result').style.display = 'block';
