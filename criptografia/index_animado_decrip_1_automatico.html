@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decriptografia Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            display: none;
+        }
+
+        .char-container {
+            display: inline-block;
+            text-align: center;
+            margin-right: 15px;
+            position: relative;
+            height: 2.5em;
+        }
+
+        .char {
+            display: block;
+            position: absolute;
+            left: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .old-char {
+            top: 0;
+            color: black;
+            opacity: 1;
+        }
+
+        .new-char {
+            top: -1.5em; /* Start above the old character */
+            color: red;
+            opacity: 0;
+        }
+
+        .appear {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .move-down {
+            transform: translateY(1.5em); /* Move the old char down */
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        .fall-down {
+            transform: translateY(1.5em); /* Move the new char down to replace the old one */
+            opacity: 1;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Decriptografia de Texto</h1>
+<p>Digite um texto abaixo e pressione "Decriptar" para decriptografá-lo. A decriptografia altera cada caractere para o anterior no conjunto de caracteres Unicode com uma animação em três etapas.</p>
+
+<form id="cryptoForm">
+    <label for="textInput">Texto:</label><br>
+    <input type="text" id="textInput" name="textInput" required><br><br>
+    <button type="button" id="decryptButton">Decriptar</button>
+</form>
+
+<div id="result">
+    <h2>Texto Decriptografado:</h2>
+    <p id="output"></p>
+</div>
+
+<script>
+    function decriptografar(texto) {
+        const outputElement = document.getElementById('output');
+        outputElement.innerHTML = ''; // Clear previous result
+
+        for (let i = 0; i < texto.length; i++) {
+            let originalChar = texto[i];
+            let decryptedChar = String.fromCharCode(texto.charCodeAt(i) - 1);
+
+            // Create a container for each pair of characters
+            let charContainer = document.createElement('div');
+            charContainer.classList.add('char-container');
+
+            // Create span for original character
+            let originalSpan = document.createElement('span');
+            originalSpan.classList.add('char', 'old-char');
+            originalSpan.textContent = originalChar;
+
+            // Create span for decrypted character
+            let decryptedSpan = document.createElement('span');
+            decryptedSpan.classList.add('char', 'new-char');
+            decryptedSpan.textContent = decryptedChar;
+
+            // Add both characters to the container
+            charContainer.appendChild(originalSpan);
+            charContainer.appendChild(decryptedSpan);
+            outputElement.appendChild(charContainer);
+
+            // Step 1: Make the decrypted letter appear above
+            setTimeout(() => {
+                decryptedSpan.classList.add('appear'); // Decrypted letter appears above
+            }, i * 1000); // Delay of 1 second for each character
+
+            // Step 2: Move the original letter down
+            setTimeout(() => {
+                originalSpan.classList.add('move-down');  // Move the original character down
+            }, i * 1000 + 500); // Start the replacement after 0.5 seconds of appearing
+
+            // Step 3: Move the decrypted letter down to replace the original
+            setTimeout(() => {
+                decryptedSpan.classList.add('fall-down');  // Move the decrypted character down
+            }, i * 1000 + 1000); // Start the replacement after 1 second of appearing
+
+            // Step 4: Fade out and then remove the old character after the movement completes
+            setTimeout(() => {
+                originalSpan.classList.add('fade-out');  // Fade out the original character
+                setTimeout(() => {
+                    charContainer.removeChild(originalSpan);  // Remove original character after fading out
+                }, 500); // Wait 0.5 seconds to let the fade-out animation complete
+            }, i * 1000 + 1500); // Fade out after the moving down animation completes
+        }
+
+        document.getElementById('result').style.display = 'block';
+    }
+
+    // Event listener for the "Decriptar" button
+    document.getElementById('decryptButton').addEventListener('click', function() {
+        let texto = document.getElementById('textInput').value;
+        decriptografar(texto);
+    });
+</script>
+
+</body>
+</html>
+
