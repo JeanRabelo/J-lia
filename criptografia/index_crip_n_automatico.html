@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Criptografia Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Criptografia de Texto</h1>
+<p>Digite um texto abaixo e um número "n". Cada caractere do texto será alterado para o caractere que está "n" posições à frente no conjunto de caracteres Unicode.</p>
+
+<form id="cryptoForm">
+    <label for="shiftInput">Valor de "n" (deslocamento):</label><br>
+    <input type="number" id="shiftInput" name="shiftInput" value="1" required><br><br>
+    
+    <label for="textInput">Texto:</label><br>
+    <input type="text" id="textInput" name="textInput" required><br><br>
+</form>
+
+<div id="result">
+    <h2>Texto Criptografado:</h2>
+    <p id="output"></p>
+</div>
+
+<script>
+    function criptografar(texto, n) {
+        let textoCriptografado = '';
+
+        for (let i = 0; i < texto.length; i++) {
+            let codigoCaractere = texto.charCodeAt(i);
+            let proximoCodigo = codigoCaractere + n;
+
+            // Guardrail: Redefine caracteres que ultrapassam o limite Unicode (reset para espaço)
+            if (proximoCodigo > 65535) { // Valor máximo para um caractere Unicode de 16 bits
+                proximoCodigo = 32; // Caractere espaço
+            }
+
+            textoCriptografado += String.fromCharCode(proximoCodigo);
+        }
+
+        document.getElementById('output').textContent = textoCriptografado;
+        document.getElementById('result').style.display = 'block';
+    }
+
+    // Função para obter e atualizar os valores de deslocamento e texto
+    function updateCriptografia() {
+        let texto = document.getElementById('textInput').value;
+        let n = parseInt(document.getElementById('shiftInput').value);
+        criptografar(texto, n);
+    }
+
+    // Adiciona evento de input ao campo de texto e ao número
+    document.getElementById('textInput').addEventListener('input', updateCriptografia);
+    document.getElementById('shiftInput').addEventListener('input', updateCriptografia);
+
+</script>
+
+</body>
+</html>
+
