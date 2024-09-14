@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Cryptography</title>
+    <title>Criptografia Simples</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,43 +20,43 @@
 </head>
 <body>
 
-<h1>Text Cryptography</h1>
-<p>Enter text below, and it will automatically be "crypted" by shifting each character to the next in the Unicode character set.</p>
+<h1>Criptografia de Texto</h1>
+<p>Digite um texto abaixo, e ele será automaticamente "criptografado" ao alterar cada caractere para o próximo no conjunto de caracteres Unicode.</p>
 
 <form id="cryptoForm">
-    <label for="textInput">Text:</label><br>
+    <label for="textInput">Texto:</label><br>
     <input type="text" id="textInput" name="textInput" required><br><br>
 </form>
 
 <div id="result">
-    <h2>Criptographed Text:</h2>
+    <h2>Texto Criptografado:</h2>
     <p id="output"></p>
 </div>
 
 <script>
-    function criptograph(text) {
-        let criptographedText = '';
+    function criptografar(texto) {
+        let textoCriptografado = '';
 
-        for (let i = 0; i < text.length; i++) {
-            let charCode = text.charCodeAt(i);
-            let nextCharCode = charCode + 1;
+        for (let i = 0; i < texto.length; i++) {
+            let codigoCaractere = texto.charCodeAt(i);
+            let proximoCodigo = codigoCaractere + 1;
 
-            // Guardrail: Reset characters that go beyond Unicode ranges you're interested in (general reset to space)
-            if (nextCharCode > 65535) { // Maximum value for a 16-bit Unicode character
-                nextCharCode = 32; // Space character
+            // Guardrail: Redefine caracteres que ultrapassam o limite Unicode (reset para espaço)
+            if (proximoCodigo > 65535) { // Valor máximo para um caractere Unicode de 16 bits
+                proximoCodigo = 32; // Caractere espaço
             }
 
-            criptographedText += String.fromCharCode(nextCharCode);
+            textoCriptografado += String.fromCharCode(proximoCodigo);
         }
 
-        document.getElementById('output').textContent = criptographedText;
+        document.getElementById('output').textContent = textoCriptografado;
         document.getElementById('result').style.display = 'block';
     }
 
-    // Add event listener to the input field
+    // Adiciona o evento de entrada ao campo de texto
     document.getElementById('textInput').addEventListener('input', function() {
-        let text = this.value;
-        criptograph(text);
+        let texto = this.value;
+        criptografar(texto);
     });
 </script>
 
