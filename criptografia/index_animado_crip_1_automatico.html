@@ -123,9 +123,12 @@
                 encryptedSpan.classList.add('rise-up');  // Move the encrypted character up
             }, i * 1000 + 1000); // Start the replacement after 1 second of appearing
 
-            // Step 4: Fade out the old character after the movement completes
+            // Step 4: Fade out and then remove the old character after the movement completes
             setTimeout(() => {
                 originalSpan.classList.add('fade-out');  // Fade out the original character
+                setTimeout(() => {
+                    charContainer.removeChild(originalSpan);  // Remove original character after fading out
+                }, 500); // Wait 0.5 seconds to let the fade-out animation complete
             }, i * 1000 + 1500); // Fade out after the moving up animation completes
         }
 
