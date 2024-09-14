@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decriptografia Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Decriptografia de Texto</h1>
+<p>Digite um texto abaixo e um número "n". Cada caractere do texto será alterado com base nos dígitos de "n". O primeiro caractere será alterado com base no dígito mais significativo de "n", o segundo com base no segundo dígito, e assim por diante. Se o texto for maior que o número de dígitos, o ciclo dos dígitos de "n" se repete, mas agora retrocedendo os caracteres.</p>
+
+<form id="cryptoForm">
+    <label for="shiftInput">Valor de "n" (deslocamento):</label><br>
+    <input type="number" id="shiftInput" name="shiftInput" value="1" required><br><br>
+    
+    <label for="textInput">Texto:</label><br>
+    <input type="text" id="textInput" name="textInput" required><br><br>
+</form>
+
+<div id="result">
+    <h2>Texto Decriptografado:</h2>
+    <p id="output"></p>
+</div>
+
+<script>
+    function decriptografar(texto, n) {
+        let textoDecriptografado = '';
+        let nString = n.toString(); // Converte "n" para string para acessar os dígitos
+        let nLength = nString.length;
+
+        for (let i = 0; i < texto.length; i++) {
+            let codigoCaractere = texto.charCodeAt(i);
+            
+            // Determina o valor de deslocamento baseado no dígito correspondente de "n"
+            let digito = parseInt(nString[i % nLength]); // Pega o dígito correspondente de "n" (cíclico)
+            let codigoAnterior = codigoCaractere - digito;
+
+            // Guardrail: Redefine caracteres que ultrapassam o limite inferior Unicode (reset para espaço)
+            if (codigoAnterior < 32) { // Valor mínimo para um caractere imprimível no Unicode
+                codigoAnterior = 65535; // Valor máximo para um caractere Unicode de 16 bits
+            }
+
+            textoDecriptografado += String.fromCharCode(codigoAnterior);
+        }
+
+        document.getElementById('output').textContent = textoDecriptografado;
+        document.getElementById('result').style.display = 'block';
+    }
+
+    // Função para obter e atualizar os valores de deslocamento e texto
+    function updateDecriptografia() {
+        let texto = document.getElementById('textInput').value;
+        let n = parseInt(document.getElementById('shiftInput').value);
+        decriptografar(texto, n);
+    }
+
+    // Adiciona evento de input ao campo de texto e ao número
+    document.getElementById('textInput').addEventListener('input', updateDecriptografia);
+    document.getElementById('shiftInput').addEventListener('input', updateDecriptografia);
+
+</script>
+
+</body>
+</html>
+
