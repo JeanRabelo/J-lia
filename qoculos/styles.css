@@ -56,7 +56,6 @@ body.zoom-active .zoom-o {
 }
 
 body.show-hello-world .hello-world {
-    display: block; /* Show the "Hello World" after zoom effect */
     opacity: 1;
     z-index: 5;
     transition: opacity 1s ease-in;
