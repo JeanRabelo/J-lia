@@ -26,7 +26,7 @@ body {
     transition: opacity 1s ease-in-out;
 }
 
-.hello-world {
+.content {
     font-family: 'Arial', sans-serif;
     font-size: 5rem;
     color: white;
@@ -55,7 +55,7 @@ body.zoom-active .zoom-o {
     opacity: 0; /* Fade out as it zooms in */
 }
 
-body.show-hello-world .hello-world {
+body.show-content .content {
     opacity: 1;
     z-index: 5;
     transition: opacity 1s ease-in;
