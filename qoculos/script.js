@@ -1,4 +1,5 @@
 window.onload = function() {
+    loadPurchases(); // Load the purchase table on page load
     const typedText = "QÓculos";
     const typedContainer = document.getElementById("typed-text");
     const cursor = document.querySelector(".blinking-cursor");
@@ -43,6 +44,10 @@ window.onload = function() {
                     }, 1000);
                     setTimeout(() => {
                         document.body.classList.add('show-content');
+			// remove the div class="opqrs-container" after the animation
+			setTimeout(() => {
+				document.querySelector(".opqrs-container").remove();
+			}, 1000);
                     }, 2000);
                 }, 1000);
             }, 1000);
@@ -50,3 +55,32 @@ window.onload = function() {
     }
 };
 
+async function loadPurchases() {
+    try {
+        const response = await fetch('http://localhost:8080/get_purchases');
+        const purchases = await response.json();
+
+        const tableDiv = document.getElementById('purchase-table');
+
+        if (purchases.length > 0) {
+            let tableHTML = '<table border="1"><tr><th>CPF</th><th>Vendedor</th><th>Valor</th><th>Data</th><th>Identificação</th><th>Observações</th></tr>';
+            purchases.forEach(purchase => {
+                tableHTML += `<tr>
+                                <td>${purchase.cpf}</td>
+                                <td>${purchase.vendedor}</td>
+                                <td>${purchase.valor}</td>
+                                <td>${purchase.data_compra}</td>
+                                <td>${purchase.identificacao}</td>
+                                <td>${purchase.observacoes}</td>
+                              </tr>`;
+            });
+            tableHTML += '</table>';
+            tableDiv.innerHTML = tableHTML;
+        } else {
+            tableDiv.innerHTML = '<p>Nenhuma compra registrada.</p>';
+        }
+    } catch (error) {
+        console.error('Error fetching purchases:', error);
+        document.getElementById('purchase-table').innerHTML = '<p>Erro ao carregar as compras.</p>';
+    }
+}
