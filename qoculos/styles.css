@@ -1,15 +1,16 @@
+@import url('https://db.onlinewebfonts.com/c/e5791db7c357b483e1e0d9e23bc6791e?family=Chica+Gogo+NF+W01+Bold');
 body {
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: #282c34;
+    background-color: #4ba2b3;
     overflow: hidden; /* Prevent scrollbars during animations */
 }
 
 .opqrs-container {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Chica Gogo NF W01 Bold', sans-serif;
     font-size: 10rem;
     color: white;
     position: absolute;
@@ -36,7 +37,6 @@ body {
 }
 
 .zoom-o {
-    color: red;
     font-weight: bold;
     display: inline-block;
     transition: transform 4s ease-out, opacity 4s ease-out;
