@@ -9,7 +9,9 @@ window.onload = function() {
 
             setTimeout(() => {
                 // Step 3: Activate the zoom effect on 'O' and show "Hello World"
+	        setTimeout(() => {
                 document.body.classList.add('zoom-active');
+		}, 1000); // Delay before activating the zoom effect
                 setTimeout(() => {
                     document.body.classList.add('show-hello-world');
                 }, 2000); // Delay showing "Hello World" until the zoom is done

@@ -47,11 +47,11 @@ body.fade-pqrs .fade-letters {
 }
 
 body.move-o .zoom-o {
-    transform: translate(100%, 0); /* Move 'O' to the center */
+    transform: translate(275%, 0); /* Move 'O' to the center */
 }
 
 body.zoom-active .zoom-o {
-    transform: scale(30) translate(5%, 0); /* Zoom in 'O' */
+    transform: scale(30) translate(6%, 0); /* Zoom in 'O' */
     opacity: 0; /* Fade out as it zooms in */
 }
 
