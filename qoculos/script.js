@@ -5,7 +5,7 @@ window.onload = function() {
 
         setTimeout(() => {
             // Step 2: Move the 'O' to the center (this is the same 'O' from 'Opqrs')
-            document.body.classList.add('show-o');
+            document.body.classList.add('move-o');
 
             setTimeout(() => {
                 // Step 3: Activate the zoom effect on 'O' and show "Hello World"

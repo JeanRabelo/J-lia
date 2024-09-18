@@ -39,19 +39,19 @@ body {
     color: red;
     font-weight: bold;
     display: inline-block;
-    transition: transform 2s ease-out, opacity 1s ease-out;
+    transition: transform 4s ease-out, opacity 4s ease-out;
 }
 
 body.fade-pqrs .fade-letters {
     opacity: 0; /* Fade out 'pqrs' */
 }
 
-body.show-o .zoom-o {
-    transform: translate(0, 0); /* Move 'O' to the center */
+body.move-o .zoom-o {
+    transform: translate(100%, 0); /* Move 'O' to the center */
 }
 
 body.zoom-active .zoom-o {
-    transform: scale(30); /* Zoom effect */
+    transform: scale(30) translate(5%, 0); /* Zoom in 'O' */
     opacity: 0; /* Fade out as it zooms in */
 }
 
