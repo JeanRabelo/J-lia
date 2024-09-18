@@ -14,7 +14,7 @@ body {
     font-size: 10rem;
     color: white;
     position: absolute;
-    display: flex;
+    display: none; /* Hidden until typed animation is complete */
     justify-content: center;
     align-items: center;
     z-index: 10;
@@ -42,16 +42,41 @@ body {
     transition: transform 4s ease-out, opacity 4s ease-out;
 }
 
+/* New typing effect styles */
+.typing-container {
+    font-family: 'Chica Gogo NF W01 Bold', sans-serif;
+    font-size: 10rem;
+    color: white;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 11;
+}
+
+.blinking-cursor {
+    font-weight: bold;
+    font-size: 10rem;
+    animation: blink 0.8s steps(1) infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+/* Animation states */
 body.fade-pqrs .fade-letters {
-    opacity: 0; /* Fade out 'pqrs' */
+    opacity: 0; /* Fade out 'Óculos' */
 }
 
 body.move-o .zoom-o {
-    transform: translate(275%, 0); /* Move 'O' to the center */
+    transform: translate(275%, 0); /* Move 'Q' to the center */
 }
 
 body.zoom-active .zoom-o {
-    transform: scale(30) translate(6%, 0); /* Zoom in 'O' */
+    transform: scale(30) translate(6%, 0); /* Zoom in 'Q' */
     opacity: 0; /* Fade out as it zooms in */
 }
 
