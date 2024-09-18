@@ -32,7 +32,7 @@ body {
     opacity: 0; /* Initially hidden */
     transition: opacity 1s ease-in;
     position: absolute;
-    display: none; /* Initially hidden */
+    display: block; /* Initially hidden */
 }
 
 .zoom-o {
@@ -55,9 +55,10 @@ body.zoom-active .zoom-o {
     opacity: 0; /* Fade out as it zooms in */
 }
 
-body.zoom-active .hello-world {
+body.show-hello-world .hello-world {
     display: block; /* Show the "Hello World" after zoom effect */
     opacity: 1;
     z-index: 5;
+    transition: opacity 1s ease-in;
 }
 

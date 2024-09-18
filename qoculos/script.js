@@ -11,7 +11,7 @@ window.onload = function() {
                 // Step 3: Activate the zoom effect on 'O' and show "Hello World"
                 document.body.classList.add('zoom-active');
                 setTimeout(() => {
-                    document.querySelector('.hello-world').style.display = 'block'; // Show "Hello World"
+                    document.body.classList.add('show-hello-world');
                 }, 2000); // Delay showing "Hello World" until the zoom is done
             }, 1000); // Delay before starting the zoom effect
         }, 1000); // Delay after fading out 'pqrs'
