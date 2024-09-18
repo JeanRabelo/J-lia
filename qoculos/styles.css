@@ -1,0 +1,63 @@
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #282c34;
+    overflow: hidden; /* Prevent scrollbars during animations */
+}
+
+.opqrs-container {
+    font-family: 'Arial', sans-serif;
+    font-size: 10rem;
+    color: white;
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    transition: all 1s ease-in-out;
+}
+
+.fade-letters {
+    opacity: 1;
+    transition: opacity 1s ease-in-out;
+}
+
+.hello-world {
+    font-family: 'Arial', sans-serif;
+    font-size: 5rem;
+    color: white;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 1s ease-in;
+    position: absolute;
+    display: none; /* Initially hidden */
+}
+
+.zoom-o {
+    color: red;
+    font-weight: bold;
+    display: inline-block;
+    transition: transform 2s ease-out, opacity 1s ease-out;
+}
+
+body.fade-pqrs .fade-letters {
+    opacity: 0; /* Fade out 'pqrs' */
+}
+
+body.show-o .zoom-o {
+    transform: translate(0, 0); /* Move 'O' to the center */
+}
+
+body.zoom-active .zoom-o {
+    transform: scale(30); /* Zoom effect */
+    opacity: 0; /* Fade out as it zooms in */
+}
+
+body.zoom-active .hello-world {
+    display: block; /* Show the "Hello World" after zoom effect */
+    opacity: 1;
+    z-index: 5;
+}
+
