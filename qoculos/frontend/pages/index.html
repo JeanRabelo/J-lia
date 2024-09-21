@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello World</title>
     <link rel="stylesheet" href="../styles/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
     <div class="opqrs-container">
@@ -19,12 +20,24 @@
 
     <div class="content">
         <!-- Navigation Buttons -->
-	<button onclick="window.location.href='register.html'">Registrar Novo Usuário</button>
-	<button id="logout-button">Logout</button>
-        <button onclick="window.location.href='nova_compra.html'">Cadastrar Compra</button>
-        <button onclick="window.location.href='clientes.html'">Ver Clientes</button>
-        <button onclick="window.location.href='novo_cliente.html'">Cadastrar Cliente</button>
-        <button onclick="window.location.href='editar_cliente.html'">Editar Cliente</button>
+	<button onclick="window.location.href='register.html'">
+            <i class="fas fa-user-plus"></i> Registrar Novo Usuário
+        </button>
+        <button id="logout-button">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </button>
+        <button onclick="window.location.href='nova_compra.html'">
+            <i class="fas fa-cart-plus"></i> Cadastrar Compra
+        </button>
+        <button onclick="window.location.href='clientes.html'">
+            <i class="fas fa-users"></i> Ver Clientes
+        </button>
+        <button onclick="window.location.href='novo_cliente.html'">
+            <i class="fas fa-user"></i> Cadastrar Cliente
+        </button>
+        <button onclick="window.location.href='editar_cliente.html'">
+            <i class="fas fa-edit"></i> Editar Cliente
+        </button>
 
         <!-- Placeholder for the purchases table -->
         <div id="purchase-table"></div>

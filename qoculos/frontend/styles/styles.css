@@ -100,3 +100,57 @@ body.show-content .zoom-o {
 body.show-content {
     overflow: auto;
 }
+
+/* Button styling */
+.content button {
+    background-color: #006f8a;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.content button:hover {
+    background-color: #00516a;
+}
+
+.content button i {
+    font-size: 1.2rem;
+}
+
+/* Table styling */
+#purchase-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 1rem;
+    text-align: left;
+    background-color: white;
+    color: #333;
+}
+
+#purchase-table table th, 
+#purchase-table table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+#purchase-table table th {
+    background-color: #4ba2b3;
+    color: white;
+}
+
+#purchase-table table tr:hover {
+    background-color: #f1f1f1;
+}
+
+#purchase-table table tr:last-of-type {
+    border-bottom: 2px solid #4ba2b3;
+}
