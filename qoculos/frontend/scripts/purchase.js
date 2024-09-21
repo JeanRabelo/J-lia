@@ -19,7 +19,7 @@ document.getElementById("purchase-form").addEventListener("submit", async functi
     };
 
     try {
-        const response = await fetch('https://186.202.57.139:8080/save_purchase', {
+        const response = await fetch('http://186.202.57.139:8080/save_purchase', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
