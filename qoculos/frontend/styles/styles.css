@@ -6,7 +6,7 @@ body {
     align-items: center;
     height: 100vh;
     background-color: #4ba2b3;
-    overflow: hidden; /* Prevent scrollbars during animations */
+    overflow: scroll;
 }
 
 .opqrs-container {
@@ -19,6 +19,7 @@ body {
     align-items: center;
     z-index: 10;
     transition: all 1s ease-in-out;
+    transform-origin: top left;
 }
 
 .fade-letters {
@@ -27,19 +28,25 @@ body {
 }
 
 .content {
+    z-index: 5;
     font-family: 'Arial', sans-serif;
     font-size: 5rem;
     color: white;
     opacity: 0; /* Initially hidden */
     transition: opacity 1s ease-in;
-    position: absolute;
-    display: block; /* Initially hidden */
+    position: relative;
+    display: block;
+    transform-origin: center center; /* Adjust scaling origin */
+    overflow: auto; /* Ensure content doesn't clip out */
 }
 
 .zoom-o {
     font-weight: bold;
     display: inline-block;
     transition: transform 4s ease-out, opacity 4s ease-out;
+    transform-origin: center;
+    z-index: 20; /* Higher than other elements during animation */
+    transform-origin: center center;
 }
 
 /* New typing effect styles */
@@ -86,3 +93,10 @@ body.show-content .content {
     transition: opacity 1s ease-in;
 }
 
+body.show-content .zoom-o {
+    display: none; /* Hide after animation */
+}
+
+body.show-content {
+    overflow: auto;
+}

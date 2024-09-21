@@ -52,6 +52,10 @@ window.onload = function() {
                     }, 1000);
                     setTimeout(() => {
                         document.body.classList.add('show-content');
+
+			// Enable scrolling after showing the content
+                        document.body.style.overflow = 'auto';
+
 			// remove the div class="opqrs-container" after the animation
 			setTimeout(() => {
 				document.querySelector(".opqrs-container").remove();
