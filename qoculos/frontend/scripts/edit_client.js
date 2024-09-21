@@ -9,7 +9,7 @@ async function loadClientData(cpf) {
     }
 
     try {
-        const response = await fetch(`http://186.202.57.139:8080/get_client/${cpf}`, {
+        const response = await fetch(`https://186.202.57.139:8080/get_client/${cpf}`, {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -51,7 +51,7 @@ document.getElementById("edit-client-form").addEventListener("submit", async fun
     };
 
     try {
-        const response = await fetch(`http://186.202.57.139:8080/update_client/${cpf}`, {
+        const response = await fetch(`https://186.202.57.139:8080/update_client/${cpf}`, {
             method: 'PUT',
             headers: { 
                 'Content-Type': 'application/json',

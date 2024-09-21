@@ -6,7 +6,7 @@ async function loadClients() {
     }
 
     try {
-        const response = await fetch('http://186.202.57.139:8080/get_clients', {
+        const response = await fetch('https://186.202.57.139:8080/get_clients', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }

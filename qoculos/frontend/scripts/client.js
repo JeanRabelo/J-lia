@@ -15,7 +15,7 @@ document.getElementById("client-form").addEventListener("submit", async function
     };
 
     try {
-        const response = await fetch('http://186.202.57.139:8080/save_client', {
+        const response = await fetch('https://186.202.57.139:8080/save_client', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json',
