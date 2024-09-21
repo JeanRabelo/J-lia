@@ -11,7 +11,6 @@ async function loadClients() {
                 'Authorization': `Bearer ${token}`
             }
         });
-	console.log(response);
         if (response.ok) {
 	    const tableDiv = document.getElementById('client-table');
             const clients = await response.json();
