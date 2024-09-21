@@ -74,7 +74,7 @@ async function loadPurchases() {
     }
 
     try {
-        const response = await fetch('http://localhost:8080/get_purchases', {
+        const response = await fetch('http://186.202.57.139:8080/get_purchases', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
