@@ -61,6 +61,7 @@ def init_db():
     conn.close()
 
 @app.route('/register', methods=['POST'])
+@jwt_required()
 def register():
     data = request.json
     username = data.get('username')

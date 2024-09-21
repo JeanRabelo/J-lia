@@ -113,3 +113,8 @@ async function loadPurchases() {
     }
 }
 
+document.getElementById("logout-button").addEventListener("click", function() {
+    localStorage.removeItem('access_token');
+    window.location.href = 'login.html';
+});
+
