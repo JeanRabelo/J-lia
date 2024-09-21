@@ -1,8 +1,20 @@
+from flask_jwt_extended import (
+    JWTManager, create_access_token, jwt_required, get_jwt_identity
+)
+import bcrypt
+from datetime import timedelta
 from flask import Flask, request, jsonify
 import sqlite3
 from flask_cors import CORS
+from os import getenv
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = getenv('JWT_SECRET_KEY')
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)  # Token expires in 1 hour
+jwt = JWTManager(app)
 CORS(app)  # Enable CORS to allow communication with frontend
 
 # Database setup
@@ -35,10 +47,70 @@ def init_db():
             observacoes TEXT
         )
     ''')
+
+    # Create the users table
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT UNIQUE NOT NULL,
+            password TEXT NOT NULL
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"msg": "Missing username or password"}), 400
+
+    # Hash the password
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    hashed_password_str = hashed_password.decode('utf-8')
+
+    try:
+        conn = sqlite3.connect(DATABASE)
+        cursor = conn.cursor()
+        cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)',
+                       (username, hashed_password_str))
+        conn.commit()
+        conn.close()
+    except sqlite3.IntegrityError:
+        return jsonify({"msg": "Username already exists"}), 409
+
+    return jsonify({"msg": "User created successfully"}), 201
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if not username or not password:
+        return jsonify({"msg": "Missing username or password"}), 400
+
+    conn = sqlite3.connect(DATABASE)
+    cursor = conn.cursor()
+    cursor.execute('SELECT password FROM users WHERE username = ?', (username,))
+    result = cursor.fetchone()
+    conn.close()
+
+    if result:
+        stored_password_str = result[0]
+        stored_password = stored_password_str.encode('utf-8')
+        if bcrypt.checkpw(password.encode('utf-8'), stored_password):
+            access_token = create_access_token(identity=username)
+            return jsonify(access_token=access_token), 200
+
+    return jsonify({"msg": "Bad username or password"}), 401
+
 @app.route('/save_purchase', methods=['POST'])
+@jwt_required()
 def save_purchase():
     """Endpoint to save a new purchase."""
     data = request.json
@@ -61,6 +133,7 @@ def save_purchase():
     return jsonify({"status": "success", "message": "Purchase saved successfully"}), 201
 
 @app.route('/get_purchases', methods=['GET'])
+@jwt_required()
 def get_purchases():
     """Endpoint to get all purchases."""
     conn = sqlite3.connect(DATABASE)
@@ -85,6 +158,7 @@ def get_purchases():
 
 # Create a new client
 @app.route('/save_client', methods=['POST'])
+@jwt_required()
 def save_client():
     data = request.json
     cpf = data.get('cpf')
@@ -105,6 +179,7 @@ def save_client():
 
 # Get all clients with number of purchases and total spent
 @app.route('/get_clients', methods=['GET'])
+@jwt_required()
 def get_clients():
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -130,7 +205,8 @@ def get_clients():
     return jsonify(client_list)
 
 # Get a single client's data
-@app.route('/get_client/<cpf>', methods=['GET']) # Use the client's CPF as a parameter
+@app.route('/get_client/<cpf>', methods=['GET']) 
+@jwt_required()# Use the client's CPF as a parameter
 def get_client(cpf):
     conn = sqlite3.connect(DATABASE)
     cursor = conn.cursor()
@@ -149,6 +225,7 @@ def get_client(cpf):
 
 # Update an existing client's data
 @app.route('/update_client/<cpf>', methods=['PUT'])
+@jwt_required()
 def update_client(cpf):
     data = request.json
     data_nascimento = data.get('data_nascimento')

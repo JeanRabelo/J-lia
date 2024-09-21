@@ -1,5 +1,13 @@
+// purchase.js
+
 document.getElementById("purchase-form").addEventListener("submit", async function(event) {
     event.preventDefault();
+
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
 
     const formData = {
         cpf: document.getElementById("cpf").value,
@@ -13,13 +21,19 @@ document.getElementById("purchase-form").addEventListener("submit", async functi
     try {
         const response = await fetch('http://localhost:8080/save_purchase', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(formData)
         });
 
         if (response.ok) {
             alert('Compra cadastrada com sucesso!');
             window.location.href = 'index.html'; // Redirect back to main page after submission
+        } else if (response.status === 401) {
+            alert('Sessão expirada. Faça login novamente.');
+            window.location.href = 'login.html';
         } else {
             alert('Erro ao salvar a compra.');
         }

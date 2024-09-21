@@ -1,4 +1,12 @@
+// script.js
+
 window.onload = function() {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     loadPurchases(); // Load the purchase table on page load
     const typedText = "QÓculos";
     const typedContainer = document.getElementById("typed-text");
@@ -53,34 +61,55 @@ window.onload = function() {
             }, 1000);
         }, 2000);
     }
+
+    // Existing animation code...
+    // [Keep your existing typing and animation functions here]
 };
 
 async function loadPurchases() {
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     try {
-        const response = await fetch('http://localhost:8080/get_purchases');
-        const purchases = await response.json();
+        const response = await fetch('http://localhost:8080/get_purchases', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
 
-        const tableDiv = document.getElementById('purchase-table');
+        if (response.ok) {
+            const purchases = await response.json();
+            const tableDiv = document.getElementById('purchase-table');
 
-        if (purchases.length > 0) {
-            let tableHTML = '<table border="1"><tr><th>CPF</th><th>Vendedor</th><th>Valor</th><th>Data</th><th>Identificação</th><th>Observações</th></tr>';
-            purchases.forEach(purchase => {
-                tableHTML += `<tr>
-                                <td>${purchase.cpf}</td>
-                                <td>${purchase.vendedor}</td>
-                                <td>${purchase.valor}</td>
-                                <td>${purchase.data_compra}</td>
-                                <td>${purchase.identificacao}</td>
-                                <td>${purchase.observacoes}</td>
-                              </tr>`;
-            });
-            tableHTML += '</table>';
-            tableDiv.innerHTML = tableHTML;
+            if (purchases.length > 0) {
+                let tableHTML = '<table border="1"><tr><th>CPF</th><th>Vendedor</th><th>Valor</th><th>Data</th><th>Identificação</th><th>Observações</th></tr>';
+                purchases.forEach(purchase => {
+                    tableHTML += `<tr>
+                                    <td>${purchase.cpf}</td>
+                                    <td>${purchase.vendedor}</td>
+                                    <td>${purchase.valor}</td>
+                                    <td>${purchase.data_compra}</td>
+                                    <td>${purchase.identificacao}</td>
+                                    <td>${purchase.observacoes}</td>
+                                  </tr>`;
+                });
+                tableHTML += '</table>';
+                tableDiv.innerHTML = tableHTML;
+            } else {
+                tableDiv.innerHTML = '<p>Nenhuma compra registrada.</p>';
+            }
+        } else if (response.status === 401) {
+            alert('Sessão expirada. Faça login novamente.');
+            window.location.href = 'login.html';
         } else {
-            tableDiv.innerHTML = '<p>Nenhuma compra registrada.</p>';
+            document.getElementById('purchase-table').innerHTML = '<p>Erro ao carregar as compras.</p>';
         }
     } catch (error) {
         console.error('Error fetching purchases:', error);
         document.getElementById('purchase-table').innerHTML = '<p>Erro ao carregar as compras.</p>';
     }
 }
+

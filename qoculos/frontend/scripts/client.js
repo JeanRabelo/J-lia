@@ -1,6 +1,12 @@
 document.getElementById("client-form").addEventListener("submit", async function(event) {
     event.preventDefault();
 
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+        window.location.href = 'login.html';
+        return;
+    }
+
     const clientData = {
         cpf: document.getElementById("cpf").value,
         data_nascimento: document.getElementById("data-nascimento").value,
@@ -11,13 +17,19 @@ document.getElementById("client-form").addEventListener("submit", async function
     try {
         const response = await fetch('http://localhost:8080/save_client', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
             body: JSON.stringify(clientData)
         });
 
         if (response.ok) {
             alert('Cliente cadastrado com sucesso!');
-            window.location.href = 'clientes.html'; // Redirect to clients page after submission
+            window.location.href = 'clientes.html';
+        } else if (response.status === 401) {
+            alert('Sessão expirada. Faça login novamente.');
+            window.location.href = 'login.html';
         } else {
             alert('Erro ao salvar o cliente.');
         }
