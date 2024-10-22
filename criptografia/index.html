@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link to All Pages</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 5px 0;
+        }
+        a {
+            text-decoration: none;
+            color: #3498db;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Pages in Current Folder</h1>
+    <ul id="pages-list"></ul>
+
+    <script>
+        // List of pages you want to link to. Add or remove files as needed.
+        const pages = [
+            "index_animado_crip_1_automatico.html",
+            "index_animado_decrip_1_automatico.html",
+            "index_crip_1_automatico.html",
+            "index_crip_digito_de_n_automatico.html",
+            "index_crip_n_automatico.html",
+            "index_decrip_1_automatico.html",
+            "index_decrip_digito_de_n_automatico.html",
+            "index_decrip_n_automatico.html"
+        ];
+
+        const ul = document.getElementById("pages-list");
+
+        // Dynamically create list items for each page
+        pages.forEach(page => {
+            const li = document.createElement("li");
+            const a = document.createElement("a");
+            a.href = page;
+            a.textContent = page.replace(".html", "").replace("-", " ").toUpperCase();
+            li.appendChild(a);
+            ul.appendChild(li);
+        });
+    </script>
+
+</body>
+</html>
