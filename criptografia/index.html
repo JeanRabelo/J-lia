@@ -71,6 +71,15 @@
         </ul>
     </div>
 
+    <div class="menu">
+        <div class="menu-title" onclick="toggleMenu('menu-criptografia-assimetrica')">Criptografia Assimétrica</div>
+        <ul id="menu-criptografia-assimetrica" class="submenu">
+            <li><a href="rsa_keygen.html">Criar Chaves</a></li>
+            <li><a href="rsa_encrypt.html">Encriptar</a></li>
+            <li><a href="rsa_decrypt.html">Decriptar</a></li>
+        </ul>
+    </div>
+
     <script>
         function toggleMenu(menuId) {
             const submenu = document.getElementById(menuId);
