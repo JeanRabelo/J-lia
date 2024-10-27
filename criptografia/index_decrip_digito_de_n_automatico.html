@@ -16,6 +16,52 @@
             border: 1px solid #000;
             display: none;
         }
+
+        .char-container {
+            display: inline-block;
+            text-align: center;
+            margin-right: 15px;
+            position: relative;
+            height: 2.5em;
+        }
+
+        .char {
+            display: block;
+            position: absolute;
+            left: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .old-char {
+            top: 0;
+            color: black;
+            opacity: 1;
+        }
+
+        .new-char {
+            top: -1.5em;
+            color: red;
+            opacity: 0;
+        }
+
+        .appear {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .move-down {
+            transform: translateY(1.5em);
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        .fall-down {
+            transform: translateY(1.5em);
+            opacity: 1;
+            color: black;
+        }
     </style>
 </head>
 <body>
@@ -29,6 +75,7 @@
     
     <label for="textInput">Texto:</label><br>
     <input type="text" id="textInput" name="textInput" required><br><br>
+    <button type="button" id="decryptButton">Decriptar</button>
 </form>
 
 <div id="result">
@@ -38,40 +85,69 @@
 
 <script>
     function decriptografar(texto, n) {
-        let textoDecriptografado = '';
-        let nString = n.toString(); // Converte "n" para string para acessar os dígitos
+        const outputElement = document.getElementById('output');
+        outputElement.innerHTML = ''; // Clear previous result
+
+        let nString = n.toString();
         let nLength = nString.length;
 
         for (let i = 0; i < texto.length; i++) {
-            let codigoCaractere = texto.charCodeAt(i);
-            
-            // Determina o valor de deslocamento baseado no dígito correspondente de "n"
-            let digito = parseInt(nString[i % nLength]); // Pega o dígito correspondente de "n" (cíclico)
-            let codigoAnterior = codigoCaractere - digito;
+            let originalChar = texto[i];
+            let digito = parseInt(nString[i % nLength]);
+            let decryptedChar = String.fromCharCode(texto.charCodeAt(i) - digito);
 
-            // Guardrail: Redefine caracteres que ultrapassam o limite inferior Unicode (reset para espaço)
-            if (codigoAnterior < 32) { // Valor mínimo para um caractere imprimível no Unicode
-                codigoAnterior = 65535; // Valor máximo para um caractere Unicode de 16 bits
-            }
+            // Create a container for each pair of characters
+            let charContainer = document.createElement('div');
+            charContainer.classList.add('char-container');
 
-            textoDecriptografado += String.fromCharCode(codigoAnterior);
+            // Create span for original character
+            let originalSpan = document.createElement('span');
+            originalSpan.classList.add('char', 'old-char');
+            originalSpan.textContent = originalChar;
+
+            // Create span for decrypted character
+            let decryptedSpan = document.createElement('span');
+            decryptedSpan.classList.add('char', 'new-char');
+            decryptedSpan.textContent = decryptedChar;
+
+            // Add both characters to the container
+            charContainer.appendChild(originalSpan);
+            charContainer.appendChild(decryptedSpan);
+            outputElement.appendChild(charContainer);
+
+            // Step 1: Make the decrypted letter appear above
+            setTimeout(() => {
+                decryptedSpan.classList.add('appear');
+            }, i * 1000);
+
+            // Step 2: Move the original letter down
+            setTimeout(() => {
+                originalSpan.classList.add('move-down');
+            }, i * 1000 + 500);
+
+            // Step 3: Move the decrypted letter down to replace the original
+            setTimeout(() => {
+                decryptedSpan.classList.add('fall-down');
+            }, i * 1000 + 1000);
+
+            // Step 4: Fade out and then remove the old character after the movement completes
+            setTimeout(() => {
+                originalSpan.classList.add('fade-out');
+                setTimeout(() => {
+                    charContainer.removeChild(originalSpan);
+                }, 500);
+            }, i * 1000 + 1500);
         }
 
-        document.getElementById('output').textContent = textoDecriptografado;
         document.getElementById('result').style.display = 'block';
     }
 
-    // Função para obter e atualizar os valores de deslocamento e texto
-    function updateDecriptografia() {
+    // Event listener for the "Decriptar" button
+    document.getElementById('decryptButton').addEventListener('click', function() {
         let texto = document.getElementById('textInput').value;
         let n = parseInt(document.getElementById('shiftInput').value);
         decriptografar(texto, n);
-    }
-
-    // Adiciona evento de input ao campo de texto e ao número
-    document.getElementById('textInput').addEventListener('input', updateDecriptografia);
-    document.getElementById('shiftInput').addEventListener('input', updateDecriptografia);
-
+    });
 </script>
 
 </body>
