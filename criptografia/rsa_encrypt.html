@@ -103,17 +103,19 @@
 </div>
 
 <script>
+    let encryptedMessageArray = [];
+
     function encryptMessage(message, e, n) {
         const outputElement = document.getElementById('output');
         outputElement.innerHTML = ''; // Clear previous result
 
-        let encryptedMessage = [];
+        encryptedMessageArray = []; // Clear the array before each encryption
 
         for (let i = 0; i < message.length; i++) {
             let charCode = BigInt(message.charCodeAt(i));
             let encryptedCharCode = modPow(charCode, e, n);
 
-            encryptedMessage.push(encryptedCharCode.toString());
+            encryptedMessageArray.push(encryptedCharCode.toString());
 
             // Create a container for each character
             let charContainer = document.createElement('div');
@@ -157,7 +159,7 @@
 
         // Display the encrypted message as comma-separated numbers
         setTimeout(() => {
-            let encryptedText = encryptedMessage.join(', ');
+            let encryptedText = encryptedMessageArray.join(', ');
             let resultText = document.createElement('p');
             resultText.textContent = "Mensagem Criptografada Completa: " + encryptedText;
             outputElement.appendChild(resultText);
@@ -181,8 +183,9 @@
     }
 
     function copyToClipboard() {
-        const outputText = document.getElementById('output').textContent;
-        navigator.clipboard.writeText(outputText).then(() => {
+        // Join the encryptedMessageArray with commas for easier decryption
+        const encryptedText = encryptedMessageArray.join(', ');
+        navigator.clipboard.writeText(encryptedText).then(() => {
             const copyButton = document.getElementById('copyButton');
             copyButton.classList.add('copied');
             copyButton.textContent = "Copiado!";

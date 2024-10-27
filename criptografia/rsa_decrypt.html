@@ -104,18 +104,19 @@
 </div>
 
 <script>
+    let decryptedMessage = '';
+
     function decryptMessage(encryptedMessage, d, n) {
         const outputElement = document.getElementById('output');
         outputElement.innerHTML = ''; // Clear previous result
 
-        let decryptedMessage = '';
+        decryptedMessage = ''; // Clear the decrypted message before each decryption
 
         for (let i = 0; i < encryptedMessage.length; i++) {
             let encryptedCharCode = BigInt(encryptedMessage[i]);
             let decryptedCharCode = modPow(encryptedCharCode, d, n);
 
             let char = String.fromCharCode(Number(decryptedCharCode));
-
             decryptedMessage += char;
 
             // Create a container for each character
@@ -183,8 +184,8 @@
     }
 
     function copyToClipboard() {
-        const outputText = document.getElementById('output').textContent;
-        navigator.clipboard.writeText(outputText).then(() => {
+        // Copy only the decrypted message text
+        navigator.clipboard.writeText(decryptedMessage).then(() => {
             const copyButton = document.getElementById('copyButton');
             copyButton.classList.add('copied');
             copyButton.textContent = "Copiado!";
