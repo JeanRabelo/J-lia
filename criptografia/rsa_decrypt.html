@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decriptografia RSA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            display: none;
+        }
+
+        .char-container {
+            display: inline-block;
+            text-align: center;
+            margin-right: 15px;
+            position: relative;
+            height: 2.5em;
+        }
+
+        .char {
+            display: block;
+            position: absolute;
+            left: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .old-char {
+            top: 0;
+            color: black;
+            opacity: 1;
+            word-wrap: break-word;
+            width: 50px; /* Adjust as needed */
+        }
+
+        .new-char {
+            top: -1.5em;
+            color: red;
+            opacity: 0;
+        }
+
+        .appear {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .move-down {
+            transform: translateY(1.5em);
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        .fall-down {
+            transform: translateY(1.5em);
+            opacity: 1;
+            color: black;
+        }
+
+        /* Style for the "Copy to Clipboard" button */
+        #copyButton {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #copyButton.copied {
+            background-color: green;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Decriptografia RSA</h1>
+<p>Digite a mensagem criptografada (números separados por vírgula) e a chave privada (d, n) para decriptar a mensagem usando RSA.</p>
+
+<form id="cryptoForm">
+    <label for="privateKeyD">Chave Privada d:</label><br>
+    <input type="text" id="privateKeyD" name="privateKeyD" required><br><br>
+
+    <label for="privateKeyN">Chave Privada n:</label><br>
+    <input type="text" id="privateKeyN" name="privateKeyN" required><br><br>
+
+    <label for="encryptedInput">Mensagem Criptografada (números separados por vírgula):</label><br>
+    <input type="text" id="encryptedInput" name="encryptedInput" required><br><br>
+    <button type="button" id="decryptButton">Decriptar</button>
+</form>
+
+<div id="result">
+    <h2>Mensagem Decriptografada:</h2>
+    <p id="output"></p>
+    <button type="button" id="copyButton" onclick="copyToClipboard()">Copiar para Área de Transferência</button>
+</div>
+
+<script>
+    function decryptMessage(encryptedMessage, d, n) {
+        const outputElement = document.getElementById('output');
+        outputElement.innerHTML = ''; // Clear previous result
+
+        let decryptedMessage = '';
+
+        for (let i = 0; i < encryptedMessage.length; i++) {
+            let encryptedCharCode = BigInt(encryptedMessage[i]);
+            let decryptedCharCode = modPow(encryptedCharCode, d, n);
+
+            let char = String.fromCharCode(Number(decryptedCharCode));
+
+            decryptedMessage += char;
+
+            // Create a container for each character
+            let charContainer = document.createElement('div');
+            charContainer.classList.add('char-container');
+
+            // Encrypted code
+            let encryptedSpan = document.createElement('span');
+            encryptedSpan.classList.add('char', 'old-char');
+            encryptedSpan.textContent = encryptedCharCode.toString();
+
+            // Decrypted character
+            let decryptedSpan = document.createElement('span');
+            decryptedSpan.classList.add('char', 'new-char');
+            decryptedSpan.textContent = char;
+
+            // Add both characters to the container
+            charContainer.appendChild(encryptedSpan);
+            charContainer.appendChild(decryptedSpan);
+            outputElement.appendChild(charContainer);
+
+            // Animations
+            setTimeout(() => {
+                decryptedSpan.classList.add('appear');
+            }, i * 1000);
+
+            setTimeout(() => {
+                encryptedSpan.classList.add('move-down');
+            }, i * 1000 + 500);
+
+            setTimeout(() => {
+                decryptedSpan.classList.add('fall-down');
+            }, i * 1000 + 1000);
+
+            setTimeout(() => {
+                encryptedSpan.classList.add('fade-out');
+                setTimeout(() => {
+                    charContainer.removeChild(encryptedSpan);
+                }, 500);
+            }, i * 1000 + 1500);
+        }
+
+        // Display the decrypted message after animations
+        setTimeout(() => {
+            let resultText = document.createElement('p');
+            resultText.textContent = "Mensagem Decriptografada Completa: " + decryptedMessage;
+            outputElement.appendChild(resultText);
+        }, encryptedMessage.length * 1000 + 2000);
+
+        document.getElementById('result').style.display = 'block';
+    }
+
+    // Modular exponentiation function
+    function modPow(base, exponent, modulus) {
+        if (modulus === BigInt(1)) return BigInt(0);
+        let result = BigInt(1);
+        base = base % modulus;
+        while (exponent > BigInt(0)) {
+            if (exponent % BigInt(2) === BigInt(1))
+                result = (result * base) % modulus;
+            exponent = exponent / BigInt(2);
+            base = (base * base) % modulus;
+        }
+        return result;
+    }
+
+    function copyToClipboard() {
+        const outputText = document.getElementById('output').textContent;
+        navigator.clipboard.writeText(outputText).then(() => {
+            const copyButton = document.getElementById('copyButton');
+            copyButton.classList.add('copied');
+            copyButton.textContent = "Copiado!";
+
+            setTimeout(() => {
+                copyButton.classList.remove('copied');
+                copyButton.textContent = "Copiar para Área de Transferência";
+            }, 2000);
+        });
+    }
+
+    // Event listener for the "Decriptar" button
+    document.getElementById('decryptButton').addEventListener('click', function() {
+        let encryptedInput = document.getElementById('encryptedInput').value;
+        let encryptedMessage = encryptedInput.split(',').map(s => s.trim());
+        let d = BigInt(document.getElementById('privateKeyD').value);
+        let n = BigInt(document.getElementById('privateKeyN').value);
+        decryptMessage(encryptedMessage, d, n);
+    });
+</script>
+
+</body>
+</html>
+

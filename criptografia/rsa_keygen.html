@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geração de Chaves RSA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            display: none;
+        }
+        /* Style for the "Copy to Clipboard" button */
+        #copyButton {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #copyButton.copied {
+            background-color: green;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Geração de Chaves RSA</h1>
+<p>Clique no botão abaixo para gerar um par de chaves pública e privada RSA.</p>
+
+<button type="button" id="generateButton">Gerar Chaves</button>
+
+<div id="result">
+    <h2>Chaves Geradas:</h2>
+    <p><strong>Chave Pública (e, n):</strong> <span id="publicKey"></span></p>
+    <p><strong>Chave Privada (d, n):</strong> <span id="privateKey"></span></p>
+    <button type="button" id="copyButton" onclick="copyToClipboard()">Copiar Chaves</button>
+</div>
+
+<script>
+    // Function to generate a random prime number (using small primes for simplicity)
+    function generatePrime(bits) {
+        const min = BigInt(2) ** BigInt(bits - 1);
+        const max = BigInt(2) ** BigInt(bits) - BigInt(1);
+        while (true) {
+            let p = BigInt(Math.floor(Math.random() * Number(max - min)) + Number(min));
+            if (isProbablyPrime(p)) {
+                return p;
+            }
+        }
+    }
+
+    // Miller-Rabin primality test
+    function isProbablyPrime(n, k = 5) {
+        if (n === BigInt(2) || n === BigInt(3)) return true;
+        if (n < BigInt(2) || n % BigInt(2) === BigInt(0)) return false;
+
+        let s = BigInt(0);
+        let d = n - BigInt(1);
+        while (d % BigInt(2) === BigInt(0)) {
+            d /= BigInt(2);
+            s += BigInt(1);
+        }
+
+        WitnessLoop:
+        for (let i = 0; i < k; i++) {
+            let a = BigInt(Math.floor(Math.random() * Number(n - BigInt(4))) + 2); // Random integer in [2, n-2]
+            let x = modPow(a, d, n);
+            if (x === BigInt(1) || x === n - BigInt(1)) continue;
+            for (let r = 1n; r < s; r++) {
+                x = modPow(x, BigInt(2), n);
+                if (x === BigInt(1)) return false;
+                if (x === n - BigInt(1)) continue WitnessLoop;
+            }
+            return false;
+        }
+        return true;
+    }
+
+    // Modular exponentiation
+    function modPow(base, exponent, modulus) {
+        if (modulus === BigInt(1)) return BigInt(0);
+        let result = BigInt(1);
+        base = base % modulus;
+        while (exponent > BigInt(0)) {
+            if (exponent % BigInt(2) === BigInt(1))
+                result = (result * base) % modulus;
+            exponent = exponent / BigInt(2);
+            base = (base * base) % modulus;
+        }
+        return result;
+    }
+
+    // Compute GCD
+    function gcd(a, b) {
+        while (b != BigInt(0)) {
+            let t = b;
+            b = a % b;
+            a = t;
+        }
+        return a;
+    }
+
+    // Extended Euclidean Algorithm
+    function egcd(a, b) {
+        let s = BigInt(0), old_s = BigInt(1);
+        let t = BigInt(1), old_t = BigInt(0);
+        let r = b, old_r = a;
+
+        while (r != BigInt(0)) {
+            let quotient = old_r / r;
+            [old_r, r] = [r, old_r - quotient * r];
+            [old_s, s] = [s, old_s - quotient * s];
+            [old_t, t] = [t, old_t - quotient * t];
+        }
+        return {gcd: old_r, x: old_s, y: old_t};
+    }
+
+    // Modular inverse
+    function modInverse(e, phi) {
+        let result = egcd(e, phi);
+        if (result.gcd != BigInt(1)) {
+            throw new Error('e e phi não são coprimos');
+        } else {
+            return (result.x % phi + phi) % phi;
+        }
+    }
+
+    function copyToClipboard() {
+        const publicKey = document.getElementById('publicKey').textContent;
+        const privateKey = document.getElementById('privateKey').textContent;
+        const keys = `Chave Pública (e, n): ${publicKey}\nChave Privada (d, n): ${privateKey}`;
+        navigator.clipboard.writeText(keys).then(() => {
+            const copyButton = document.getElementById('copyButton');
+            copyButton.classList.add('copied');
+            copyButton.textContent = "Copiado!";
+
+            setTimeout(() => {
+                copyButton.classList.remove('copied');
+                copyButton.textContent = "Copiar Chaves";
+            }, 2000);
+        });
+    }
+
+    document.getElementById('generateButton').addEventListener('click', function() {
+        let bits = 16; // Using small bits for demonstration
+        // Generate two distinct primes p and q
+        let p = generatePrime(bits);
+        let q;
+        do {
+            q = generatePrime(bits);
+        } while (q === p);
+
+        let n = p * q;
+        let phi = (p - BigInt(1)) * (q - BigInt(1));
+
+        // Choose e
+        let e = BigInt(65537); // Commonly used prime exponent
+        if (gcd(e, phi) !== BigInt(1)) {
+            // Find another e
+            e = BigInt(3);
+            while (gcd(e, phi) !== BigInt(1)) {
+                e += BigInt(2);
+            }
+        }
+
+        // Compute d
+        let d = modInverse(e, phi);
+
+        // Display the keys
+        document.getElementById('publicKey').textContent = `(${e.toString()}, ${n.toString()})`;
+        document.getElementById('privateKey').textContent = `(${d.toString()}, ${n.toString()})`;
+
+        document.getElementById('result').style.display = 'block';
+    });
+</script>
+
+</body>
+</html>
+
