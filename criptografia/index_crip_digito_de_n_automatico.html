@@ -81,6 +81,7 @@
 <div id="result">
     <h2>Texto Criptografado:</h2>
     <p id="output"></p>
+    <button type="button" onclick="copyToClipboard()">Copiar para Área de Transferência</button>
 </div>
 
 <script>
@@ -140,6 +141,13 @@
         }
 
         document.getElementById('result').style.display = 'block';
+    }
+
+    function copyToClipboard() {
+        const outputText = document.getElementById('output').textContent;
+        navigator.clipboard.writeText(outputText).then(() => {
+            alert("Texto copiado para a área de transferência!");
+        });
     }
 
     // Event listener for the "Encriptar" button
