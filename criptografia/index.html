@@ -7,12 +7,31 @@
     <style>
         body {
             font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 20px;
         }
-        ul {
+        h1 {
+            color: #2c3e50;
+        }
+        .menu {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .menu-title {
+            font-weight: bold;
+            cursor: pointer;
+            margin: 5px 0;
+            color: #2980b9;
+        }
+        .submenu {
             list-style-type: none;
-            padding: 0;
+            padding-left: 20px;
+            display: none;
         }
-        li {
+        .submenu li {
             margin: 5px 0;
         }
         a {
@@ -26,34 +45,43 @@
 </head>
 <body>
 
-    <h1>Pages in Current Folder</h1>
-    <ul id="pages-list"></ul>
+    <h1>Criptografia pra Júlia!</h1>
+
+    <div class="menu">
+        <div class="menu-title" onclick="toggleMenu('menu-cript-1')">Cript 1</div>
+        <ul id="menu-cript-1" class="submenu">
+            <li><a href="index_crip_1_automatico.html">Encriptar</a></li>
+            <li><a href="index_decrip_1_automatico.html">Decriptar</a></li>
+        </ul>
+    </div>
+
+    <div class="menu">
+        <div class="menu-title" onclick="toggleMenu('menu-cript-n')">Cript N</div>
+        <ul id="menu-cript-n" class="submenu">
+            <li><a href="index_crip_n_automatico.html">Encriptar</a></li>
+            <li><a href="index_decrip_n_automatico.html">Decriptar</a></li>
+        </ul>
+    </div>
+
+    <div class="menu">
+        <div class="menu-title" onclick="toggleMenu('menu-cript-digitos-n')">Cript dígitos N</div>
+        <ul id="menu-cript-digitos-n" class="submenu">
+            <li><a href="index_crip_digito_de_n_automatico.html">Encriptar</a></li>
+            <li><a href="index_decrip_digito_de_n_automatico.html">Decriptar</a></li>
+        </ul>
+    </div>
 
     <script>
-        // List of pages you want to link to. Add or remove files as needed.
-        const pages = [
-            "index_animado_crip_1_automatico.html",
-            "index_animado_decrip_1_automatico.html",
-            "index_crip_1_automatico.html",
-            "index_crip_digito_de_n_automatico.html",
-            "index_crip_n_automatico.html",
-            "index_decrip_1_automatico.html",
-            "index_decrip_digito_de_n_automatico.html",
-            "index_decrip_n_automatico.html"
-        ];
-
-        const ul = document.getElementById("pages-list");
-
-        // Dynamically create list items for each page
-        pages.forEach(page => {
-            const li = document.createElement("li");
-            const a = document.createElement("a");
-            a.href = page;
-            a.textContent = page.replace(".html", "").replace("-", " ").toUpperCase();
-            li.appendChild(a);
-            ul.appendChild(li);
-        });
+        function toggleMenu(menuId) {
+            const submenu = document.getElementById(menuId);
+            if (submenu.style.display === "none" || submenu.style.display === "") {
+                submenu.style.display = "block";
+            } else {
+                submenu.style.display = "none";
+            }
+        }
     </script>
 
 </body>
 </html>
+
