@@ -16,12 +16,58 @@
             border: 1px solid #000;
             display: none;
         }
+
+        .char-container {
+            display: inline-block;
+            text-align: center;
+            margin-right: 15px;
+            position: relative;
+            height: 2.5em;
+        }
+
+        .char {
+            display: block;
+            position: absolute;
+            left: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .old-char {
+            top: 0;
+            color: black;
+            opacity: 1;
+        }
+
+        .new-char {
+            top: 1.5em;
+            color: red;
+            opacity: 0;
+        }
+
+        .appear {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .move-up {
+            transform: translateY(-1.5em);
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        .rise-up {
+            transform: translateY(-1.5em);
+            opacity: 1;
+            color: black;
+        }
     </style>
 </head>
 <body>
 
 <h1>Criptografia de Texto</h1>
-<p>Digite um texto abaixo e um número "n". Cada caractere do texto será alterado para o caractere que está "n" posições à frente no conjunto de caracteres Unicode.</p>
+<p>Digite um texto abaixo e um número "n". Cada caractere do texto será alterado para o caractere que está "n" posições à frente no conjunto de caracteres Unicode com uma animação.</p>
 
 <form id="cryptoForm">
     <label for="shiftInput">Valor de "n" (deslocamento):</label><br>
@@ -29,6 +75,7 @@
     
     <label for="textInput">Texto:</label><br>
     <input type="text" id="textInput" name="textInput" required><br><br>
+    <button type="button" id="encryptButton">Encriptar</button>
 </form>
 
 <div id="result">
@@ -38,35 +85,65 @@
 
 <script>
     function criptografar(texto, n) {
-        let textoCriptografado = '';
+        const outputElement = document.getElementById('output');
+        outputElement.innerHTML = ''; // Clear previous result
 
         for (let i = 0; i < texto.length; i++) {
-            let codigoCaractere = texto.charCodeAt(i);
-            let proximoCodigo = codigoCaractere + n;
+            let originalChar = texto[i];
+            let encryptedChar = String.fromCharCode(texto.charCodeAt(i) + n);
 
-            // Guardrail: Redefine caracteres que ultrapassam o limite Unicode (reset para espaço)
-            if (proximoCodigo > 65535) { // Valor máximo para um caractere Unicode de 16 bits
-                proximoCodigo = 32; // Caractere espaço
-            }
+            // Create a container for each pair of characters
+            let charContainer = document.createElement('div');
+            charContainer.classList.add('char-container');
 
-            textoCriptografado += String.fromCharCode(proximoCodigo);
+            // Create span for original character
+            let originalSpan = document.createElement('span');
+            originalSpan.classList.add('char', 'old-char');
+            originalSpan.textContent = originalChar;
+
+            // Create span for encrypted character
+            let encryptedSpan = document.createElement('span');
+            encryptedSpan.classList.add('char', 'new-char');
+            encryptedSpan.textContent = encryptedChar;
+
+            // Add both characters to the container
+            charContainer.appendChild(originalSpan);
+            charContainer.appendChild(encryptedSpan);
+            outputElement.appendChild(charContainer);
+
+            // Step 1: Make the encrypted letter appear below
+            setTimeout(() => {
+                encryptedSpan.classList.add('appear');
+            }, i * 1000);
+
+            // Step 2: Move the original letter up
+            setTimeout(() => {
+                originalSpan.classList.add('move-up');
+            }, i * 1000 + 500);
+
+            // Step 3: Move the encrypted letter up to replace the original
+            setTimeout(() => {
+                encryptedSpan.classList.add('rise-up');
+            }, i * 1000 + 1000);
+
+            // Step 4: Fade out and then remove the old character after the movement completes
+            setTimeout(() => {
+                originalSpan.classList.add('fade-out');
+                setTimeout(() => {
+                    charContainer.removeChild(originalSpan);
+                }, 500);
+            }, i * 1000 + 1500);
         }
 
-        document.getElementById('output').textContent = textoCriptografado;
         document.getElementById('result').style.display = 'block';
     }
 
-    // Função para obter e atualizar os valores de deslocamento e texto
-    function updateCriptografia() {
+    // Event listener for the "Encriptar" button
+    document.getElementById('encryptButton').addEventListener('click', function() {
         let texto = document.getElementById('textInput').value;
         let n = parseInt(document.getElementById('shiftInput').value);
         criptografar(texto, n);
-    }
-
-    // Adiciona evento de input ao campo de texto e ao número
-    document.getElementById('textInput').addEventListener('input', updateCriptografia);
-    document.getElementById('shiftInput').addEventListener('input', updateCriptografia);
-
+    });
 </script>
 
 </body>
