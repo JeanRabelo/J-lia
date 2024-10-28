@@ -13,3 +13,15 @@ function modPow(base, exponent, modulus) {
     }
     return result;
 }
+
+const base64Chars = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz+/";
+
+// Function to convert a base 64 string back to base 10 BigInt
+function fromBase64BigInt(base64) {
+    let num = 0n;
+    const base = 64n;
+    for (let i = 0; i < base64.length; i++) {
+        num = num * base + BigInt(base64Chars.indexOf(base64[i]));
+    }
+    return num;
+}

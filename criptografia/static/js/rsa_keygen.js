@@ -118,8 +118,8 @@ document.getElementById('generateButton').addEventListener('click', function() {
     let d = modInverse(e, phi);
 
     // Display the keys
-    document.getElementById('publicKey').textContent = `(${e.toString()}, ${n.toString()})`;
-    document.getElementById('privateKey').textContent = `(${d.toString()}, ${n.toString()})`;
+    document.getElementById('publicKey').textContent = `(${toBase64BigInt(e)}, ${toBase64BigInt(n)})`;
+    document.getElementById('privateKey').textContent = `(${toBase64BigInt(d)}, ${toBase64BigInt(n)})`;
 
     document.getElementById('result').style.display = 'block';
 });
@@ -140,4 +140,17 @@ function copyToClipboard(keyId) {
             copyButton.textContent = keyId === 'publicKey' ? "Copiar Chave Pública" : "Copiar Chave Privada";
         }, 2000);
     });
+}
+
+// Function to convert a BigInt from base 10 to base 64
+function toBase64BigInt(num) {
+    if (num === 0n) return base64Chars[0];
+    let base64 = "";
+    const base = 64n;
+    while (num > 0n) {
+        const remainder = num % base;
+        base64 = base64Chars[Number(remainder)] + base64;
+        num = num / base;
+    }
+    return base64;
 }

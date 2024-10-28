@@ -56,7 +56,7 @@ document.getElementById('decryptButton').addEventListener('click', function() {
     let encryptedInput = document.getElementById('encryptedInput').value;
     let encryptedMessage = encryptedInput.split(',').map(s => s.trim());
     let privateKey = document.getElementById('privateKey').value.split(',');
-    let d = BigInt(privateKey[0].trim());
-    let n = BigInt(privateKey[1].trim());
+    let d = BigInt(fromBase64BigInt(privateKey[0].trim()));
+    let n = BigInt(fromBase64BigInt(privateKey[1].trim()));
     decryptMessage(encryptedMessage, d, n);
 });

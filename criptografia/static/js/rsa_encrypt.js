@@ -56,7 +56,7 @@ function copyToClipboard() {
 document.getElementById('encryptButton').addEventListener('click', function() {
     let message = document.getElementById('messageInput').value;
     let publicKey = document.getElementById('publicKey').value.split(',');
-    let e = BigInt(publicKey[0].trim());
-    let n = BigInt(publicKey[1].trim());
+    let e = BigInt(fromBase64BigInt(publicKey[0].trim()));
+    let n = BigInt(fromBase64BigInt(publicKey[1].trim()));
     encryptMessage(message, e, n);
 });
