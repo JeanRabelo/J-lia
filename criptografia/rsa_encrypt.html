@@ -85,11 +85,8 @@
 <p>Digite uma mensagem e a chave pública (e, n) para criptografar a mensagem usando RSA.</p>
 
 <form id="cryptoForm">
-    <label for="publicKeyE">Chave Pública e:</label><br>
-    <input type="text" id="publicKeyE" name="publicKeyE" required><br><br>
-
-    <label for="publicKeyN">Chave Pública n:</label><br>
-    <input type="text" id="publicKeyN" name="publicKeyN" required><br><br>
+    <label for="publicKey">Chave Pública (e, n):</label><br>
+    <input type="text" id="publicKey" name="publicKey" placeholder="e,n" required><br><br>
 
     <label for="messageInput">Mensagem:</label><br>
     <input type="text" id="messageInput" name="messageInput" required><br><br>
@@ -107,75 +104,48 @@
 
     function encryptMessage(message, e, n) {
         const outputElement = document.getElementById('output');
-        outputElement.innerHTML = ''; // Clear previous result
-
-        encryptedMessageArray = []; // Clear the array before each encryption
-
+        outputElement.innerHTML = '';
+        encryptedMessageArray = [];
         for (let i = 0; i < message.length; i++) {
             let charCode = BigInt(message.charCodeAt(i));
             let encryptedCharCode = modPow(charCode, e, n);
-
             encryptedMessageArray.push(encryptedCharCode.toString());
 
-            // Create a container for each character
             let charContainer = document.createElement('div');
             charContainer.classList.add('char-container');
-
-            // Original character
             let originalSpan = document.createElement('span');
             originalSpan.classList.add('char', 'old-char');
             originalSpan.textContent = message[i];
-
-            // Encrypted character (displayed as code)
             let encryptedSpan = document.createElement('span');
             encryptedSpan.classList.add('char', 'new-char');
             encryptedSpan.textContent = encryptedCharCode.toString();
-
-            // Add both characters to the container
             charContainer.appendChild(originalSpan);
             charContainer.appendChild(encryptedSpan);
             outputElement.appendChild(charContainer);
 
-            // Animations
-            setTimeout(() => {
-                encryptedSpan.classList.add('appear');
-            }, i * 1000);
-
-            setTimeout(() => {
-                originalSpan.classList.add('move-up');
-            }, i * 1000 + 500);
-
-            setTimeout(() => {
-                encryptedSpan.classList.add('rise-up');
-            }, i * 1000 + 1000);
-
+            setTimeout(() => { encryptedSpan.classList.add('appear'); }, i * 1000);
+            setTimeout(() => { originalSpan.classList.add('move-up'); }, i * 1000 + 500);
+            setTimeout(() => { encryptedSpan.classList.add('rise-up'); }, i * 1000 + 1000);
             setTimeout(() => {
                 originalSpan.classList.add('fade-out');
-                setTimeout(() => {
-                    charContainer.removeChild(originalSpan);
-                }, 500);
+                setTimeout(() => { charContainer.removeChild(originalSpan); }, 500);
             }, i * 1000 + 1500);
         }
-
-        // Display the encrypted message as comma-separated numbers
         setTimeout(() => {
             let encryptedText = encryptedMessageArray.join(', ');
             let resultText = document.createElement('p');
             resultText.textContent = "Mensagem Criptografada Completa: " + encryptedText;
             outputElement.appendChild(resultText);
         }, message.length * 1000 + 2000);
-
         document.getElementById('result').style.display = 'block';
     }
 
-    // Modular exponentiation function
     function modPow(base, exponent, modulus) {
         if (modulus === BigInt(1)) return BigInt(0);
         let result = BigInt(1);
         base = base % modulus;
         while (exponent > BigInt(0)) {
-            if (exponent % BigInt(2) === BigInt(1))
-                result = (result * base) % modulus;
+            if (exponent % BigInt(2) === BigInt(1)) result = (result * base) % modulus;
             exponent = exponent / BigInt(2);
             base = (base * base) % modulus;
         }
@@ -183,13 +153,11 @@
     }
 
     function copyToClipboard() {
-        // Join the encryptedMessageArray with commas for easier decryption
         const encryptedText = encryptedMessageArray.join(', ');
         navigator.clipboard.writeText(encryptedText).then(() => {
             const copyButton = document.getElementById('copyButton');
             copyButton.classList.add('copied');
             copyButton.textContent = "Copiado!";
-
             setTimeout(() => {
                 copyButton.classList.remove('copied');
                 copyButton.textContent = "Copiar para Área de Transferência";
@@ -197,15 +165,14 @@
         });
     }
 
-    // Event listener for the "Encriptar" button
     document.getElementById('encryptButton').addEventListener('click', function() {
         let message = document.getElementById('messageInput').value;
-        let e = BigInt(document.getElementById('publicKeyE').value);
-        let n = BigInt(document.getElementById('publicKeyN').value);
+        let publicKey = document.getElementById('publicKey').value.split(',');
+        let e = BigInt(publicKey[0].trim());
+        let n = BigInt(publicKey[1].trim());
         encryptMessage(message, e, n);
     });
 </script>
 
 </body>
 </html>
-

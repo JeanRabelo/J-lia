@@ -86,11 +86,8 @@
 <p>Digite a mensagem criptografada (números separados por vírgula) e a chave privada (d, n) para decriptar a mensagem usando RSA.</p>
 
 <form id="cryptoForm">
-    <label for="privateKeyD">Chave Privada d:</label><br>
-    <input type="text" id="privateKeyD" name="privateKeyD" required><br><br>
-
-    <label for="privateKeyN">Chave Privada n:</label><br>
-    <input type="text" id="privateKeyN" name="privateKeyN" required><br><br>
+    <label for="privateKey">Chave Privada (d, n):</label><br>
+    <input type="text" id="privateKey" name="privateKey" placeholder="d,n" required><br><br>
 
     <label for="encryptedInput">Mensagem Criptografada (números separados por vírgula):</label><br>
     <input type="text" id="encryptedInput" name="encryptedInput" required><br><br>
@@ -108,75 +105,48 @@
 
     function decryptMessage(encryptedMessage, d, n) {
         const outputElement = document.getElementById('output');
-        outputElement.innerHTML = ''; // Clear previous result
-
-        decryptedMessage = ''; // Clear the decrypted message before each decryption
-
+        outputElement.innerHTML = '';
+        decryptedMessage = '';
         for (let i = 0; i < encryptedMessage.length; i++) {
             let encryptedCharCode = BigInt(encryptedMessage[i]);
             let decryptedCharCode = modPow(encryptedCharCode, d, n);
-
             let char = String.fromCharCode(Number(decryptedCharCode));
             decryptedMessage += char;
 
-            // Create a container for each character
             let charContainer = document.createElement('div');
             charContainer.classList.add('char-container');
-
-            // Encrypted code
             let encryptedSpan = document.createElement('span');
             encryptedSpan.classList.add('char', 'old-char');
             encryptedSpan.textContent = encryptedCharCode.toString();
-
-            // Decrypted character
             let decryptedSpan = document.createElement('span');
             decryptedSpan.classList.add('char', 'new-char');
             decryptedSpan.textContent = char;
-
-            // Add both characters to the container
             charContainer.appendChild(encryptedSpan);
             charContainer.appendChild(decryptedSpan);
             outputElement.appendChild(charContainer);
 
-            // Animations
-            setTimeout(() => {
-                decryptedSpan.classList.add('appear');
-            }, i * 1000);
-
-            setTimeout(() => {
-                encryptedSpan.classList.add('move-down');
-            }, i * 1000 + 500);
-
-            setTimeout(() => {
-                decryptedSpan.classList.add('fall-down');
-            }, i * 1000 + 1000);
-
+            setTimeout(() => { decryptedSpan.classList.add('appear'); }, i * 1000);
+            setTimeout(() => { encryptedSpan.classList.add('move-down'); }, i * 1000 + 500);
+            setTimeout(() => { decryptedSpan.classList.add('fall-down'); }, i * 1000 + 1000);
             setTimeout(() => {
                 encryptedSpan.classList.add('fade-out');
-                setTimeout(() => {
-                    charContainer.removeChild(encryptedSpan);
-                }, 500);
+                setTimeout(() => { charContainer.removeChild(encryptedSpan); }, 500);
             }, i * 1000 + 1500);
         }
-
-        // Display the decrypted message after animations
         setTimeout(() => {
             let resultText = document.createElement('p');
             resultText.textContent = "Mensagem Decriptografada Completa: " + decryptedMessage;
             outputElement.appendChild(resultText);
         }, encryptedMessage.length * 1000 + 2000);
-
         document.getElementById('result').style.display = 'block';
     }
 
-    // Modular exponentiation function
     function modPow(base, exponent, modulus) {
         if (modulus === BigInt(1)) return BigInt(0);
         let result = BigInt(1);
         base = base % modulus;
         while (exponent > BigInt(0)) {
-            if (exponent % BigInt(2) === BigInt(1))
-                result = (result * base) % modulus;
+            if (exponent % BigInt(2) === BigInt(1)) result = (result * base) % modulus;
             exponent = exponent / BigInt(2);
             base = (base * base) % modulus;
         }
@@ -184,12 +154,10 @@
     }
 
     function copyToClipboard() {
-        // Copy only the decrypted message text
         navigator.clipboard.writeText(decryptedMessage).then(() => {
             const copyButton = document.getElementById('copyButton');
             copyButton.classList.add('copied');
             copyButton.textContent = "Copiado!";
-
             setTimeout(() => {
                 copyButton.classList.remove('copied');
                 copyButton.textContent = "Copiar para Área de Transferência";
@@ -197,16 +165,15 @@
         });
     }
 
-    // Event listener for the "Decriptar" button
     document.getElementById('decryptButton').addEventListener('click', function() {
         let encryptedInput = document.getElementById('encryptedInput').value;
         let encryptedMessage = encryptedInput.split(',').map(s => s.trim());
-        let d = BigInt(document.getElementById('privateKeyD').value);
-        let n = BigInt(document.getElementById('privateKeyN').value);
+        let privateKey = document.getElementById('privateKey').value.split(',');
+        let d = BigInt(privateKey[0].trim());
+        let n = BigInt(privateKey[1].trim());
         decryptMessage(encryptedMessage, d, n);
     });
 </script>
 
 </body>
 </html>
-
