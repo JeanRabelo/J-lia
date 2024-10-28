@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Simples</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            display: none;
+        }
+
+        .char-container {
+            display: inline-block;
+            text-align: center;
+            margin-right: 15px;
+            position: relative;
+            height: 2.5em;
+        }
+
+        .char {
+            display: block;
+            position: absolute;
+            left: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+
+        .old-char {
+            top: 0;
+            color: black;
+            opacity: 1;
+        }
+
+        .new-char {
+            top: 1.5em;
+            color: red;
+            opacity: 0;
+        }
+
+        .appear {
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .move-up {
+            transform: translateY(-1.5em);
+        }
+
+        .fade-out {
+            opacity: 0;
+        }
+
+        .rise-up {
+            transform: translateY(-1.5em);
+            opacity: 1;
+            color: black;
+        }
+
+        #copyButton {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #copyButton.copied {
+            background-color: green;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Hash de Texto Simples</h1>
+<p>Digite um texto abaixo e um número "n". A soma dos valores Unicode de cada caractere será calculada, e o resultado final será o resto da divisão pelo número "n".</p>
+
+<form id="hashForm">
+    <label for="modInput">Valor de "n" (módulo):</label><br>
+    <input type="number" id="modInput" name="modInput" value="1" required><br><br>
+    
+    <label for="textInput">Texto:</label><br>
+    <input type="text" id="textInput" name="textInput" required><br><br>
+    <button type="button" id="hashButton">Calcular Hash</button>
+</form>
+
+<div id="result">
+    <h2>Hash do Texto:</h2>
+    <p id="output"></p>
+    <button type="button" id="copyButton" onclick="copyToClipboard()">Copiar para Área de Transferência</button>
+</div>
+
+<script>
+    function calcularHash(texto, n) {
+        const outputElement = document.getElementById('output');
+        outputElement.innerHTML = ''; // Clear previous result
+
+        let sum = 0;
+
+        for (let i = 0; i < texto.length; i++) {
+            let charCode = texto.charCodeAt(i);
+            sum += charCode;
+
+            // Create a container for each character's Unicode value
+            let charContainer = document.createElement('div');
+            charContainer.classList.add('char-container');
+
+            // Create span for character's Unicode value
+            let charSpan = document.createElement('span');
+            charSpan.classList.add('char', 'old-char');
+            charSpan.textContent = charCode;
+
+            // Create span for cumulative sum
+            let sumSpan = document.createElement('span');
+            sumSpan.classList.add('char', 'new-char');
+            sumSpan.textContent = sum;
+
+            // Add both characters to the container
+            charContainer.appendChild(charSpan);
+            charContainer.appendChild(sumSpan);
+            outputElement.appendChild(charContainer);
+
+            // Step 1: Make the cumulative sum appear below
+            setTimeout(() => {
+                sumSpan.classList.add('appear');
+            }, i * 1000);
+
+            // Step 2: Move the character's Unicode value up
+            setTimeout(() => {
+                charSpan.classList.add('move-up');
+            }, i * 1000 + 500);
+
+            // Step 3: Move the cumulative sum up to replace the original value
+            setTimeout(() => {
+                sumSpan.classList.add('rise-up');
+            }, i * 1000 + 1000);
+
+            // Step 4: Fade out and then remove the Unicode value after the movement completes
+            setTimeout(() => {
+                charSpan.classList.add('fade-out');
+                setTimeout(() => {
+                    charContainer.removeChild(charSpan);
+                }, 500);
+            }, i * 1000 + 1500);
+        }
+
+        // Calculate hash result
+        let hashResult = sum % n;
+        
+        setTimeout(() => {
+            outputElement.innerHTML = `<strong>Hash Resultado:</strong> ${hashResult}`;
+            document.getElementById('result').style.display = 'block';
+        }, texto.length * 1000 + 1500);
+    }
+
+    function copyToClipboard() {
+        const outputText = document.getElementById('output').textContent;
+        navigator.clipboard.writeText(outputText).then(() => {
+            const copyButton = document.getElementById('copyButton');
+            copyButton.classList.add('copied');
+            copyButton.textContent = "Copiado!";
+
+            setTimeout(() => {
+                copyButton.classList.remove('copied');
+                copyButton.textContent = "Copiar para Área de Transferência";
+            }, 2000);
+        });
+    }
+
+    // Event listener for the "Calcular Hash" button
+    document.getElementById('hashButton').addEventListener('click', function() {
+        let texto = document.getElementById('textInput').value;
+        let n = parseInt(document.getElementById('modInput').value);
+        calcularHash(texto, n);
+    });
+</script>
+
+</body>
+</html>
