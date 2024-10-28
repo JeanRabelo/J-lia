@@ -15,9 +15,13 @@
 
 <div id="result">
     <h2>Chaves Geradas:</h2>
-    <p><strong>Chave Pública (e, n):</strong> <span id="publicKey"></span></p>
-    <p><strong>Chave Privada (d, n):</strong> <span id="privateKey"></span></p>
-    <button type="button" id="copyButton" onclick="copyToClipboard()">Copiar Chaves</button>
+    <p><strong>Chave Pública (e, n):</strong> <span id="publicKey"></span>
+        <button type="button" id="copyPublicKeyButton" onclick="copyToClipboard('publicKey')">Copiar Chave Pública</button>
+    </p>
+    <p><strong>Chave Privada (d, n):</strong> <span id="privateKey"></span>
+        <button type="button" id="copyPrivateKeyButton" onclick="copyToClipboard('privateKey')">Copiar Chave Privada</button>
+    </p>
+    <button type="button" id="copyButton" onclick="copyAllToClipboard()">Copiar Chaves</button>
 </div>
 
 <script src="rsa_common.js"></script>

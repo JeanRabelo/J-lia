@@ -74,10 +74,12 @@ function modInverse(e, phi) {
     }
 }
 
-function copyToClipboard() {
+// Copy both keys to clipboard
+function copyAllToClipboard() {
     const publicKey = document.getElementById('publicKey').textContent;
     const privateKey = document.getElementById('privateKey').textContent;
     const keys = `Chave Pública (e, n): ${publicKey}\nChave Privada (d, n): ${privateKey}`;
+
     navigator.clipboard.writeText(keys).then(() => {
         const copyButton = document.getElementById('copyButton');
         copyButton.classList.add('copied');
@@ -121,3 +123,21 @@ document.getElementById('generateButton').addEventListener('click', function() {
 
     document.getElementById('result').style.display = 'block';
 });
+
+// Copy specific key to clipboard
+function copyToClipboard(keyId) {
+    const keyText = document.getElementById(keyId).textContent;
+    // Remove parentheses and split by comma
+    const key = keyText.replace(/[()]/g, '');
+
+    navigator.clipboard.writeText(key).then(() => {
+        const copyButton = keyId === 'publicKey' ? document.getElementById('copyPublicKeyButton') : document.getElementById('copyPrivateKeyButton');
+        copyButton.classList.add('copied');
+        copyButton.textContent = "Copiado!";
+
+        setTimeout(() => {
+            copyButton.classList.remove('copied');
+            copyButton.textContent = keyId === 'publicKey' ? "Copiar Chave Pública" : "Copiar Chave Privada";
+        }, 2000);
+    });
+}

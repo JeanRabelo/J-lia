@@ -24,3 +24,17 @@ body {
     background-color: green;
     color: white;
 }
+
+/* Style for individual "Copy" buttons */
+button[type="button"] {
+    margin-left: 10px;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button[type="button"].copied {
+    background-color: green;
+    color: white;
+}
