@@ -1,0 +1,26 @@
+/* rsa_common.css */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+#result {
+    margin-top: 20px;
+    padding: 10px;
+    border: 1px solid #000;
+    display: none;
+}
+
+/* Style for the "Copy to Clipboard" button */
+#copyButton {
+    margin-top: 10px;
+    padding: 8px 12px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#copyButton.copied {
+    background-color: green;
+    color: white;
+}

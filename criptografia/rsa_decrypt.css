@@ -1,0 +1,48 @@
+/* rsa_decrypt.css */
+.char-container {
+    display: inline-block;
+    text-align: center;
+    margin-right: 15px;
+    position: relative;
+    height: 2.5em;
+}
+
+.char {
+    display: block;
+    position: absolute;
+    left: 0;
+    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+}
+
+.old-char {
+    top: 0;
+    color: black;
+    opacity: 1;
+    word-wrap: break-word;
+    width: 50px; /* Adjust as needed */
+}
+
+.new-char {
+    top: -1.5em;
+    color: red;
+    opacity: 0;
+}
+
+.appear {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.move-down {
+    transform: translateY(1.5em);
+}
+
+.fade-out {
+    opacity: 0;
+}
+
+.fall-down {
+    transform: translateY(1.5em);
+    opacity: 1;
+    color: black;
+}

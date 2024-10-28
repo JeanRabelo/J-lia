@@ -4,80 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Criptografia RSA</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #000;
-            display: none;
-        }
-
-        .char-container {
-            display: inline-block;
-            text-align: center;
-            margin-right: 15px;
-            position: relative;
-            height: 2.5em;
-        }
-
-        .char {
-            display: block;
-            position: absolute;
-            left: 0;
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        }
-
-        .old-char {
-            top: 0;
-            color: black;
-            opacity: 1;
-        }
-
-        .new-char {
-            top: 1.5em;
-            color: red;
-            opacity: 0;
-            word-wrap: break-word;
-            width: 50px; /* Adjust as needed */
-        }
-
-        .appear {
-            opacity: 1;
-            transition: opacity 0.5s ease-in-out;
-        }
-
-        .move-up {
-            transform: translateY(-1.5em);
-        }
-
-        .fade-out {
-            opacity: 0;
-        }
-
-        .rise-up {
-            transform: translateY(-1.5em);
-            opacity: 1;
-            color: black;
-        }
-
-        /* Style for the "Copy to Clipboard" button */
-        #copyButton {
-            margin-top: 10px;
-            padding: 8px 12px;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        #copyButton.copied {
-            background-color: green;
-            color: white;
-        }
-    </style>
+    <link rel="stylesheet" href="rsa_common.css">
+    <link rel="stylesheet" href="rsa_encrypt.css">
 </head>
 <body>
 
@@ -99,80 +27,8 @@
     <button type="button" id="copyButton" onclick="copyToClipboard()">Copiar para Área de Transferência</button>
 </div>
 
-<script>
-    let encryptedMessageArray = [];
-
-    function encryptMessage(message, e, n) {
-        const outputElement = document.getElementById('output');
-        outputElement.innerHTML = '';
-        encryptedMessageArray = [];
-        for (let i = 0; i < message.length; i++) {
-            let charCode = BigInt(message.charCodeAt(i));
-            let encryptedCharCode = modPow(charCode, e, n);
-            encryptedMessageArray.push(encryptedCharCode.toString());
-
-            let charContainer = document.createElement('div');
-            charContainer.classList.add('char-container');
-            let originalSpan = document.createElement('span');
-            originalSpan.classList.add('char', 'old-char');
-            originalSpan.textContent = message[i];
-            let encryptedSpan = document.createElement('span');
-            encryptedSpan.classList.add('char', 'new-char');
-            encryptedSpan.textContent = encryptedCharCode.toString();
-            charContainer.appendChild(originalSpan);
-            charContainer.appendChild(encryptedSpan);
-            outputElement.appendChild(charContainer);
-
-            setTimeout(() => { encryptedSpan.classList.add('appear'); }, i * 1000);
-            setTimeout(() => { originalSpan.classList.add('move-up'); }, i * 1000 + 500);
-            setTimeout(() => { encryptedSpan.classList.add('rise-up'); }, i * 1000 + 1000);
-            setTimeout(() => {
-                originalSpan.classList.add('fade-out');
-                setTimeout(() => { charContainer.removeChild(originalSpan); }, 500);
-            }, i * 1000 + 1500);
-        }
-        setTimeout(() => {
-            let encryptedText = encryptedMessageArray.join(', ');
-            let resultText = document.createElement('p');
-            resultText.textContent = "Mensagem Criptografada Completa: " + encryptedText;
-            outputElement.appendChild(resultText);
-        }, message.length * 1000 + 2000);
-        document.getElementById('result').style.display = 'block';
-    }
-
-    function modPow(base, exponent, modulus) {
-        if (modulus === BigInt(1)) return BigInt(0);
-        let result = BigInt(1);
-        base = base % modulus;
-        while (exponent > BigInt(0)) {
-            if (exponent % BigInt(2) === BigInt(1)) result = (result * base) % modulus;
-            exponent = exponent / BigInt(2);
-            base = (base * base) % modulus;
-        }
-        return result;
-    }
-
-    function copyToClipboard() {
-        const encryptedText = encryptedMessageArray.join(', ');
-        navigator.clipboard.writeText(encryptedText).then(() => {
-            const copyButton = document.getElementById('copyButton');
-            copyButton.classList.add('copied');
-            copyButton.textContent = "Copiado!";
-            setTimeout(() => {
-                copyButton.classList.remove('copied');
-                copyButton.textContent = "Copiar para Área de Transferência";
-            }, 2000);
-        });
-    }
-
-    document.getElementById('encryptButton').addEventListener('click', function() {
-        let message = document.getElementById('messageInput').value;
-        let publicKey = document.getElementById('publicKey').value.split(',');
-        let e = BigInt(publicKey[0].trim());
-        let n = BigInt(publicKey[1].trim());
-        encryptMessage(message, e, n);
-    });
-</script>
+<script src="rsa_common.js"></script>
+<script src="rsa_encrypt.js"></script>
 
 </body>
 </html>
