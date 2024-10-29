@@ -99,14 +99,18 @@
 
 <script>
     function calcularHash(texto, n) {
+        document.getElementById('result').style.display = 'block';
         const outputElement = document.getElementById('output');
         outputElement.innerHTML = ''; // Clear previous result
 
         let sum = 0;
 
-        for (let i = 0; i < texto.length; i++) {
-            let charCode = texto.charCodeAt(i);
-            sum += charCode;
+        for (let i = 0; i < texto.length + 1; i++) {
+	    let charCode = NaN;
+	    if (i !== texto.length) {
+                charCode = texto.charCodeAt(i);
+                sum += charCode;
+	    }
 
             // Create a container for each character's Unicode value
             let charContainer = document.createElement('div');
@@ -115,14 +119,20 @@
             // Create span for character's Unicode value
             let charSpan = document.createElement('span');
             charSpan.classList.add('char', 'old-char');
-            charSpan.textContent = texto[i];
+	    if (i !== texto.length) {
+                charSpan.textContent = texto[i];
+	    }
 
             // Create span for the char code
             let sumSpan = document.createElement('span');
             sumSpan.classList.add('char', 'new-char');
 	    
 	    // if i does not equal 0, add a plus sign before the charCode. 
-	    sumSpan.textContent = i !== 0 ? '+' + charCode : charCode;
+	    if (i !== texto.length) {
+	        sumSpan.textContent = i !== 0 ? '+' + charCode : charCode;
+	    } else {
+		sumSpan.textContent = '=' + sum;
+	    }
 
             // Add both characters to the container
             charContainer.appendChild(charSpan);
@@ -157,8 +167,7 @@
         let hashResult = sum % n;
         
         setTimeout(() => {
-            outputElement.innerHTML = `<strong>Hash Resultado:</strong> ${hashResult}`;
-            document.getElementById('result').style.display = 'block';
+	    outputElement.innerHTML += `<br><strong>Hash Resultado:</strong> ${hashResult}`;
         }, texto.length * 1000 + 1500);
     }
 
