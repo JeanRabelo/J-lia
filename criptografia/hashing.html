@@ -84,7 +84,7 @@
 
 <form id="hashForm">
     <label for="modInput">Valor de "n" (módulo):</label><br>
-    <input type="number" id="modInput" name="modInput" value="1" required><br><br>
+    <input type="number" id="modInput" name="modInput" value="10" required><br><br>
     
     <label for="textInput">Texto:</label><br>
     <input type="text" id="textInput" name="textInput" required><br><br>
@@ -115,12 +115,14 @@
             // Create span for character's Unicode value
             let charSpan = document.createElement('span');
             charSpan.classList.add('char', 'old-char');
-            charSpan.textContent = charCode;
+            charSpan.textContent = texto[i];
 
-            // Create span for cumulative sum
+            // Create span for the char code
             let sumSpan = document.createElement('span');
             sumSpan.classList.add('char', 'new-char');
-            sumSpan.textContent = sum;
+	    
+	    // if i does not equal 0, add a plus sign before the charCode. 
+	    sumSpan.textContent = i !== 0 ? '+' + charCode : charCode;
 
             // Add both characters to the container
             charContainer.appendChild(charSpan);
