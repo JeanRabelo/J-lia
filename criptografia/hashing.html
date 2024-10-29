@@ -106,11 +106,11 @@
         let sum = 0;
 
         for (let i = 0; i < texto.length + 1; i++) {
-	    let charCode = NaN;
-	    if (i !== texto.length) {
+            let charCode = NaN;
+            if (i !== texto.length) {
                 charCode = texto.charCodeAt(i);
                 sum += charCode;
-	    }
+            }
 
             // Create a container for each character's Unicode value
             let charContainer = document.createElement('div');
@@ -119,24 +119,29 @@
             // Create span for character's Unicode value
             let charSpan = document.createElement('span');
             charSpan.classList.add('char', 'old-char');
-	    if (i !== texto.length) {
+            if (i !== texto.length) {
                 charSpan.textContent = texto[i];
-	    }
+            }
 
             // Create span for the char code
             let sumSpan = document.createElement('span');
             sumSpan.classList.add('char', 'new-char');
-	    
-	    // if i does not equal 0, add a plus sign before the charCode. 
-	    if (i !== texto.length) {
-	        sumSpan.textContent = i !== 0 ? '+' + charCode : charCode;
-	    } else {
-		sumSpan.textContent = '=' + sum;
-	    }
+
+            // if i does not equal 0, add a plus sign before the charCode. 
+            if (i !== texto.length) {
+                sumSpan.textContent = i !== 0 ? '+' + charCode : charCode;
+            } else {
+                sumSpan.textContent = '=' + sum;
+            }
 
             // Add both characters to the container
             charContainer.appendChild(charSpan);
             charContainer.appendChild(sumSpan);
+
+            // Set the width of the container based on the length of sumSpan's content
+            let spanLength = sumSpan.textContent.length;
+            charContainer.style.width = `${spanLength * 10}px`; // Adjust multiplier as needed for better proportionality
+
             outputElement.appendChild(charContainer);
 
             // Step 1: Make the cumulative sum appear below
@@ -165,9 +170,9 @@
 
         // Calculate hash result
         let hashResult = sum % n;
-        
+
         setTimeout(() => {
-	    outputElement.innerHTML += `<br><strong>Hash Resultado:</strong> ${hashResult}`;
+            outputElement.innerHTML += `<br><strong>Hash Resultado:</strong> ${sum} % ${n} = ${hashResult}`;
         }, texto.length * 1000 + 1500);
     }
 
