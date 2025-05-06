@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Installments Visualizer</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    .controls { margin-bottom: 20px; }
+    .controls label { display: block; margin: 10px 0 5px; }
+    .controls input { width: 100%; padding: 5px; box-sizing: border-box; }
+
+    .chart-container { position: relative; height: 400px; border-left: 1px solid #333; border-bottom: 1px solid #333; padding-bottom: 20px; display: flex; align-items: flex-end; overflow-x: auto; }
+    .zero-line { position: absolute; bottom: 200px; left: 0; right: 0; height: 1px; background: #333; }
+    .column { width: 40px; margin: 0 5px; display: flex; flex-direction: column; align-items: center; }
+    .bar { width: 100%; }
+    .positive .bar { background-color: #4A90E2; }
+    .negative { display: flex; flex-direction: column-reverse; }
+    .principal { background-color: #7ED321; }
+    .interest { background-color: #D0011B; }
+    .label { margin-top: 5px; font-size: 12px; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>Installments Visualizer</h1>
+  <div class="controls">
+    <label>Loan Amount:</label>
+    <input type="number" id="loanAmount" value="1000" />
+
+    <label>Number of Monthly Installments:</label>
+    <input type="number" id="numInstallments" value="12" />
+
+    <label>Time Until First Installment (months):</label>
+    <input type="number" id="delay" value="1" />
+
+    <label>Annual Interest Rate (%):</label>
+    <input type="number" id="annualRate" value="12" step="0.01" />
+  </div>
+
+  <div class="chart-container" id="chart">
+    <div class="zero-line"></div>
+  </div>
+
+  <script>
+    const inputs = Array.from(document.querySelectorAll('.controls input'));
+
+    function drawChart() {
+      const container = document.getElementById('chart');
+      container.innerHTML = '<div class="zero-line"></div>';
+
+      const P = parseFloat(document.getElementById('loanAmount').value) || 0;
+      const n = parseInt(document.getElementById('numInstallments').value) || 0;
+      const delay = parseInt(document.getElementById('delay').value) || 0;
+      const annualRate = (parseFloat(document.getElementById('annualRate').value) || 0) / 100;
+      const monthlyRate = annualRate / 12;
+
+      if (P <= 0 || n <= 0) return;
+
+      // Calculate installment value (annuity formula)
+      const installment = (P * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -n));
+
+      // Prepare cash flows: first is +P, then delay blanks, then n installments
+      const flows = [];
+      flows.push({ principal: P, interest: 0 });
+      for (let i = 0; i < delay; i++) flows.push({ principal: 0, interest: 0, blank: true });
+
+      let balance = P;
+      for (let i = 0; i < n; i++) {
+        const interest = balance * monthlyRate;
+        const principal = installment - interest;
+        balance -= principal;
+        flows.push({ principal, interest });
+      }
+
+      // Determine max for scaling
+      const maxValue = Math.max(...flows.map(f => Math.abs(f.principal + f.interest)));
+      const scale = 180 / maxValue;
+
+      flows.forEach((f, idx) => {
+        const col = document.createElement('div');
+        col.className = 'column ' + (f.blank ? '' : (idx === 0 ? 'positive' : 'negative'));
+
+        if (!f.blank) {
+          if (idx === 0) {
+            const bar = document.createElement('div');
+            bar.className = 'bar positive';
+            bar.style.height = (f.principal * scale) + 'px';
+            col.appendChild(bar);
+            const lbl = document.createElement('div'); lbl.className='label'; lbl.textContent='Loan';
+            col.appendChild(lbl);
+          } else {
+            const princ = document.createElement('div');
+            princ.className = 'bar principal';
+            princ.style.height = (f.principal * scale) + 'px';
+            col.appendChild(princ);
+            const intr = document.createElement('div');
+            intr.className = 'bar interest';
+            intr.style.height = (f.interest * scale) + 'px';
+            col.appendChild(intr);
+            const lbl = document.createElement('div'); lbl.className='label'; lbl.textContent = idx + '';
+            col.appendChild(lbl);
+          }
+        }
+        container.appendChild(col);
+      });
+    }
+
+    inputs.forEach(input => input.addEventListener('input', drawChart));
+    window.onload = drawChart;
+  </script>
+</body>
+</html>
+
