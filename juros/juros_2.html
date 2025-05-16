@@ -3,104 +3,134 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Loan Amount Bar with Scale</title>
+  <title>Loan Amount Bar (HTML-only)</title>
+
   <style>
     body {
-      font-family: sans-serif;
+      font-family: system-ui, sans-serif;
       padding: 20px;
     }
-    #controls {
-      margin-bottom: 20px;
-    }
-    #canvas {
+
+    /* ── controls ─────────────────────────────────── */
+    #controls { margin-bottom: 20px; }
+
+    /* ── chart frame ──────────────────────────────── */
+    #chart {
+      position: relative;
+      width: 400px;
+      height: 300px;
       border: 1px solid #ccc;
-      display: block;
+      /* space on the left for the axis labels */
+      padding-left: 50px;
+      box-sizing: border-box;
+    }
+
+    /* Y-axis container (for labels + line) */
+    .y-axis {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 50px;
+    }
+
+    /* axis labels */
+    .label {
+      position: absolute;
+      left: 0;
+      width: 100%;
+      text-align: right;
+      font-size: 12px;
+      padding-right: 6px;
+      line-height: 1;
+    }
+    .label.top    { top: 0;    transform: translateY(-50%); }
+    .label.bottom { bottom: 0; transform: translateY(50%); }
+
+    /* vertical axis line */
+    .y-axis::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 2px;
+      background: #000;
+    }
+
+    /* plotting area (everything right of the axis) */
+    #plot {
+      position: absolute;
+      left: 50px;
+      top: 0;
+      right: 0;
+      bottom: 0;
+    }
+
+    /* horizontal zero line */
+    #zero-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: #888;
+    }
+
+    /* loan-amount bar */
+    #bar {
+      position: absolute;
+      bottom: 0;                 /* anchor on zero line */
+      left: calc(50% - 25px);    /* centre horizontally */
+      width: 50px;
+      background: steelblue;
     }
   </style>
 </head>
 <body>
+
   <div id="controls">
-    <label for="amount">Loan Amount: </label>
-    <input
-      type="number"
-      id="amount"
-      placeholder="Enter amount"
-      min="0"
-      step="1"
-    />
+    <label for="amount">Loan Amount:</label>
+    <input type="number" id="amount" min="0" step="1" placeholder="Enter amount" />
   </div>
 
-  <canvas id="canvas" width="400" height="300"></canvas>
+  <div id="chart">
+    <!-- axis + labels -->
+    <div class="y-axis">
+      <div class="label top" id="label-max">1</div>
+      <div class="label bottom">0</div>
+    </div>
+
+    <!-- plotting area -->
+    <div id="plot">
+      <div id="bar"></div>
+      <div id="zero-line"></div>
+    </div>
+  </div>
 
   <script>
-    const input = document.getElementById('amount');
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+    const input     = document.getElementById('amount');
+    const bar       = document.getElementById('bar');
+    const labelMax  = document.getElementById('label-max');
+    const plot      = document.getElementById('plot');
 
-    // Margins for drawing axis & bar
-    const margin = { top: 20, right: 20, bottom: 20, left: 50 };
-    const drawWidth  = canvas.width  - margin.left - margin.right;
-    const drawHeight = canvas.height - margin.top  - margin.bottom;
+    /** Height of the drawable area (in px) */
+    const plotHeight = () => plot.getBoundingClientRect().height;
 
+    /** Redraw everything for the given amount */
     function draw(amount) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      const ph        = plotHeight();                    // drawable height
+      const scaleMax  = amount > 0 ? amount / 0.9 : 1;   // so bar ≈ 90 % tall
+      const barHeight = (amount / scaleMax) * ph;        // proportional height
 
-      // Compute scaleMax so that bar fills ~90% of drawHeight
-      const scaleMax = amount > 0 ? amount / 0.9 : 1;
-
-      // Coordinates
-      const zeroY = margin.top + drawHeight;
-
-      // Draw Y axis
-      ctx.beginPath();
-      ctx.moveTo(margin.left, margin.top);
-      ctx.lineTo(margin.left, zeroY);
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Draw ticks and labels at 0 and scaleMax
-      ctx.fillStyle = '#000';
-      ctx.textAlign = 'right';
-      ctx.textBaseline = 'middle';
-      ctx.font = '12px sans-serif';
-
-      // Top tick (scaleMax)
-      ctx.beginPath();
-      ctx.moveTo(margin.left - 5, margin.top);
-      ctx.lineTo(margin.left, margin.top);
-      ctx.stroke();
-      ctx.fillText(scaleMax.toFixed(0), margin.left - 8, margin.top);
-
-      // Bottom tick (0)
-      ctx.beginPath();
-      ctx.moveTo(margin.left - 5, zeroY);
-      ctx.lineTo(margin.left, zeroY);
-      ctx.stroke();
-      ctx.fillText('0', margin.left - 8, zeroY);
-
-      // Draw zero line across
-      ctx.beginPath();
-      ctx.moveTo(margin.left, zeroY);
-      ctx.lineTo(canvas.width - margin.right, zeroY);
-      ctx.strokeStyle = '#888';
-      ctx.lineWidth = 1;
-      ctx.stroke();
-
-      // Draw bar
-      const barHeight = Math.min(amount, scaleMax) / scaleMax * drawHeight;
-      const barWidth = 50;
-      const barX = margin.left + (drawWidth - barWidth) / 2;
-      const barY = zeroY - barHeight;
-
-      ctx.fillStyle = 'steelblue';
-      ctx.fillRect(barX, barY, barWidth, barHeight);
+      bar.style.height   = `${barHeight}px`;
+      labelMax.textContent = scaleMax.toFixed(0);
     }
 
-    // Initial draw
+    // first render
     draw(0);
 
-    // Redraw on input
+    // update live on every keystroke
     input.addEventListener('input', () => {
       const value = Math.max(0, parseFloat(input.value) || 0);
       draw(value);
@@ -108,4 +138,3 @@
   </script>
 </body>
 </html>
-
