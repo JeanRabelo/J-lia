@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loan Amount Bar with Scale</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    #controls {
+      margin-bottom: 20px;
+    }
+    #canvas {
+      border: 1px solid #ccc;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <label for="amount">Loan Amount: </label>
+    <input
+      type="number"
+      id="amount"
+      placeholder="Enter amount"
+      min="0"
+      step="1"
+    />
+  </div>
+
+  <canvas id="canvas" width="400" height="300"></canvas>
+
+  <script>
+    const input = document.getElementById('amount');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+
+    // Margins for drawing axis & bar
+    const margin = { top: 20, right: 20, bottom: 20, left: 50 };
+    const drawWidth  = canvas.width  - margin.left - margin.right;
+    const drawHeight = canvas.height - margin.top  - margin.bottom;
+
+    function draw(amount) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Compute scaleMax so that bar fills ~90% of drawHeight
+      const scaleMax = amount > 0 ? amount / 0.9 : 1;
+
+      // Coordinates
+      const zeroY = margin.top + drawHeight;
+
+      // Draw Y axis
+      ctx.beginPath();
+      ctx.moveTo(margin.left, margin.top);
+      ctx.lineTo(margin.left, zeroY);
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw ticks and labels at 0 and scaleMax
+      ctx.fillStyle = '#000';
+      ctx.textAlign = 'right';
+      ctx.textBaseline = 'middle';
+      ctx.font = '12px sans-serif';
+
+      // Top tick (scaleMax)
+      ctx.beginPath();
+      ctx.moveTo(margin.left - 5, margin.top);
+      ctx.lineTo(margin.left, margin.top);
+      ctx.stroke();
+      ctx.fillText(scaleMax.toFixed(0), margin.left - 8, margin.top);
+
+      // Bottom tick (0)
+      ctx.beginPath();
+      ctx.moveTo(margin.left - 5, zeroY);
+      ctx.lineTo(margin.left, zeroY);
+      ctx.stroke();
+      ctx.fillText('0', margin.left - 8, zeroY);
+
+      // Draw zero line across
+      ctx.beginPath();
+      ctx.moveTo(margin.left, zeroY);
+      ctx.lineTo(canvas.width - margin.right, zeroY);
+      ctx.strokeStyle = '#888';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+
+      // Draw bar
+      const barHeight = Math.min(amount, scaleMax) / scaleMax * drawHeight;
+      const barWidth = 50;
+      const barX = margin.left + (drawWidth - barWidth) / 2;
+      const barY = zeroY - barHeight;
+
+      ctx.fillStyle = 'steelblue';
+      ctx.fillRect(barX, barY, barWidth, barHeight);
+    }
+
+    // Initial draw
+    draw(0);
+
+    // Redraw on input
+    input.addEventListener('input', () => {
+      const value = Math.max(0, parseFloat(input.value) || 0);
+      draw(value);
+    });
+  </script>
+</body>
+</html>
+
