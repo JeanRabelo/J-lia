@@ -6,7 +6,7 @@ import sys
 options = uc.ChromeOptions()
 driver = uc.Chrome(
     options=options,
-    driver_executable_path="/home/jean/Github/JeanRabelo/Júlia/scraper_moradia/chromedriver"
+    driver_executable_path="../../chromedriver"
 )
 
 # URLs for login and post-login detection
